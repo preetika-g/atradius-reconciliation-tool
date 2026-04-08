@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atradius Reconciliation — AKS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --teal:#2A6B70;--teal-dark:#1E5055;--teal-deeper:#163C40;--teal-light:#3D8C91;
+    --lime:#C8F53C;--lime-dark:#A8D028;--lime-dim:#9EBF2A;
+    --bg:#EEF5F5;--surface:#FFFFFF;--surface2:#E4EEEF;--surface3:#D6E8E9;
+    --border:#C2D8DA;--border2:#A8C5C8;
+    --text:#0F2E30;--text2:#3A6366;--text3:#6A9295;
+    --green:#1E6B3F;--green-bg:#D8F5E5;
+    --amber:#7A5010;--amber-bg:#FDF0DC;
+    --red:#8B2020;--red-bg:#FCEAEA;
+    --orange:#7A3E0A;--orange-bg:#FEF0E0;
+    --mono:'DM Mono',monospace;--sans:'Poppins',sans-serif;
+    --radius:8px;--radius-lg:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh}
+  header{background:var(--teal-deeper);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--lime)}
+  .logo{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px}
+  .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--lime)}
+  .logo span{font-weight:300;opacity:.6;margin-left:4px;letter-spacing:.02em}
+  .header-actions{display:flex;align-items:center;gap:6px}
+  .hbtn{padding:5px 12px;font-size:10px;font-family:var(--sans);font-weight:500;border-radius:20px;cursor:pointer;border:1px solid rgba(200,245,60,.3);background:transparent;color:rgba(200,245,60,.8);transition:all .15s;white-space:nowrap;letter-spacing:.03em}
+  .hbtn:hover{background:rgba(200,245,60,.12);color:var(--lime);border-color:var(--lime)}
+  .hbtn.save{border-color:rgba(200,245,60,.5);color:var(--lime)}
+  .hbtn.save:hover{background:rgba(200,245,60,.15)}
+  .hbtn.clr{border-color:rgba(255,140,140,.3);color:rgba(255,160,160,.8)}
+  .hbtn.clr:hover{background:rgba(255,100,100,.1);color:#ffaaaa}
+  .save-status{font-size:10px;color:rgba(200,245,60,.45);font-family:var(--mono)}
+  .header-meta{font-size:10px;color:rgba(255,255,255,.35);font-family:var(--mono)}
+  .shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 56px)}
+  nav{background:var(--teal-dark);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+  .nav-sec{padding:0 18px 5px;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,245,60,.5);margin-top:18px}
+  .nav-sec:first-child{margin-top:4px}
+  .ni{display:flex;align-items:center;gap:9px;padding:8px 18px;font-size:12px;color:rgba(255,255,255,.6);cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-weight:400}
+  .ni:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
+  .ni.on{color:#fff;border-left-color:var(--lime);background:rgba(200,245,60,.1);font-weight:600}
+  .ni .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);flex-shrink:0}
+  .ni.on .dot{background:var(--lime)}
+  .nav-cnt{margin-left:auto;background:rgba(200,245,60,.15);color:var(--lime);font-size:9px;font-family:var(--mono);padding:1px 7px;border-radius:10px;font-weight:600}
+  main{padding:28px;overflow-y:auto;background:var(--bg)}
+  .panel{display:none}.panel.on{display:block}
+  .ptitle{font-size:22px;font-weight:700;margin-bottom:4px;color:var(--teal-deeper)}
+  .psub{font-size:12px;color:var(--text2);margin-bottom:20px;font-weight:400}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(42,107,112,.06)}
+  .card-accent{border-top:3px solid var(--lime)}
+  .ctitle{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+  label{font-size:11px;font-weight:500;color:var(--text2);display:block;margin-bottom:4px}
+  input[type=text],input[type=number],input[type=date],select{width:100%;padding:7px 10px;font-size:12px;font-family:var(--sans);border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;transition:all .15s}
+  input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,107,112,.1)}
+  input[type=file]{padding:6px 10px;font-size:11px;cursor:pointer;width:100%}
+  .btn{padding:7px 16px;font-size:11px;font-family:var(--sans);font-weight:600;border:1.5px solid var(--border2);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--teal);transition:all .15s;white-space:nowrap;letter-spacing:.02em}
+  .btn:hover{background:var(--surface2);border-color:var(--teal)}
+  .bprim{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .bprim:hover{background:var(--teal-light);border-color:var(--teal-light)}
+  .blime{background:var(--lime);color:var(--teal-deeper);border-color:var(--lime-dark);font-weight:700}
+  .blime:hover{background:var(--lime-dark)}
+  .bsm{padding:4px 12px;font-size:10px}
+  .bghost{border-color:transparent;color:var(--text2)}
+  .bghost:hover{background:var(--surface2);color:var(--teal);border-color:var(--border)}
+  .bdanger{background:var(--red-bg);color:var(--red);border-color:var(--red-bg)}
+  .bdanger:hover{background:#f5d5d5}
+  .brow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+  .met{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;position:relative;overflow:hidden}
+  .met::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)}
+  .met .ml{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px}
+  .met .mv{font-size:24px;font-weight:700;line-height:1.1;color:var(--teal-deeper)}
+  .met .ms{font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+  .met.lime-accent::before{background:var(--lime)}
+  .met.lime-accent .mv{color:var(--green)}
+  .met.flag-accent::before{background:#f0a050}
+  .met.flag-accent .mv{color:var(--orange)}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--teal);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:var(--surface2);white-space:nowrap}
+  td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface2)}
+  .mono{font-family:var(--mono);font-size:10px}
+  .trg td{background:linear-gradient(90deg,rgba(42,107,112,.07),transparent)!important;font-weight:600;font-size:10px;color:var(--teal);border-top:1px solid var(--border);border-left:3px solid var(--lime)}
+  .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;letter-spacing:.02em}
+  .bg{background:#D8F5E5;color:var(--green)}
+  .bb{background:#D8EEF5;color:#1B5A8A}
+  .ba{background:var(--amber-bg);color:var(--amber)}
+  .bgr{background:var(--surface2);color:var(--text2)}
+  .bof{background:var(--orange-bg);color:var(--orange)}
+  .upload-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+  .upload-zone:hover{border-color:var(--teal);background:rgba(42,107,112,.04)}
+  .upload-zone:hover .uico{color:var(--teal)}
+  .upload-zone p{font-size:11px;color:var(--text3);margin-top:6px}
+  .uico{font-size:28px;margin-bottom:8px;color:var(--border2);display:block;transition:color .2s}
+  .note-box{background:rgba(42,107,112,.07);border:1.5px solid rgba(42,107,112,.2);border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--teal-dark);line-height:1.6;margin-bottom:14px}
+  .warn-box{background:var(--orange-bg);border:1.5px solid #f0c090;border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--orange);line-height:1.6;margin-bottom:14px}
+  .corr-row{display:grid;grid-template-columns:1fr 20px 1fr 2fr auto;gap:8px;align-items:end;margin-bottom:8px}
+  .arr{text-align:center;font-size:16px;color:var(--teal);padding-bottom:8px;font-weight:700}
+  .period-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .pp{padding:5px 14px;font-size:10px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;color:var(--text2);font-family:var(--sans);font-weight:500;transition:all .15s;letter-spacing:.02em}
+  .pp.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+  .pp:hover:not(.on){border-color:var(--teal);color:var(--teal)}
+  .filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .filter-bar label{font-size:11px;color:var(--text2);margin-bottom:0}
+  .filter-bar select,.filter-bar input{width:auto}
+  .progress-wrap{display:flex;align-items:center;gap:6px}
+  .pbg{flex:1;height:5px;background:var(--border);border-radius:3px;min-width:40px}
+  .pbf{height:5px;border-radius:3px}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--teal-light);border-radius:3px}
+  .empty{text-align:center;padding:28px;color:var(--text3);font-size:11px}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  /* Guide */
+  .guide-step{display:flex;gap:14px;margin-bottom:18px}
+  .guide-num{width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+  .guide-body h4{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--teal-deeper)}
+  .guide-body p{font-size:12px;color:var(--text2);line-height:1.7}
+  .guide-body a{color:var(--teal)}
+  .status-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+  .sl-item{padding:10px 12px;border-radius:var(--radius);font-size:11px}
+  .sl-item strong{display:block;font-size:12px;margin-bottom:3px}
+  .flag-row td{background:#FEF0E0!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="logo-dot"></div>AKS <span>Atradius Reconciliation</span></div>
+  <div class="header-actions">
+    <span class="save-status" id="save-status"></span>
+    <button class="hbtn save" onclick="saveToStorage()">Save to browser</button>
+    <button class="hbtn" onclick="loadFromStorage()">Restore saved</button>
+    <button class="hbtn clr" onclick="clearStorage()">Clear saved</button>
+  </div>
+  <div class="header-meta" id="header-meta">No data loaded</div>
+</header>
+
+<div class="shell">
+<nav>
+  <div class="nav-sec">Data</div>
+  <div class="ni on" id="ni-coll" onclick="goNav('coll')"><div class="dot"></div>Collections<span class="nav-cnt" id="nb-coll">0</span></div>
+  <div class="ni" id="ni-chk" onclick="goNav('chk')"><div class="dot"></div>Checkouts<span class="nav-cnt" id="nb-chk">0</span></div>
+  <div class="nav-sec">Reconcile</div>
+  <div class="ni" id="ni-run" onclick="goNav('run')"><div class="dot"></div>Run &amp; Results</div>
+  <div class="ni" id="ni-gaps" onclick="goNav('gaps')"><div class="dot"></div>Gaps &amp; Flags</div>
+  <div class="ni" id="ni-hist" onclick="goNav('hist')"><div class="dot"></div>Retailer Summary</div>
+  <div class="nav-sec">Settings</div>
+  <div class="ni" id="ni-sources" onclick="goNav('sources')"><div class="dot"></div>Data Sources<span class="nav-cnt" id="nb-src">2</span></div>
+  <div class="nav-sec">Help</div>
+  <div class="ni" id="ni-guide" onclick="goNav('guide')"><div class="dot"></div>User Guide</div>
+</nav>
+
+<main>
+
+<!-- COLLECTIONS -->
+<div class="panel on" id="panel-coll">
+  <div class="ptitle">Atradius Collections</div>
+  <div class="psub">Upload the monthly Atradius remittance CSV. Rows are appended to any existing data.</div>
+  <div class="card">
+    <div class="ctitle">Upload collections CSV</div>
+    <div class="note-box"><strong>Expected columns:</strong> Remittance Date · Retailer ID · Invoice number · Recovered amount · Currency · Reference · Retailer name. Header row is auto-detected.</div>
+    <div style="padding:20px;background:var(--surface2);border-radius:var(--radius-lg);border:2px dashed var(--border2);text-align:center">
+      <div class="uico">↑</div>
+      <strong style="font-size:12px;color:var(--teal-deeper);display:block;margin-bottom:8px">Select collections CSV file</strong>
+      <input type="file" id="fu-coll" accept=".csv" style="font-size:12px;font-family:var(--sans);color:var(--text)">
+    </div>
+    <button class="btn bprim" onclick="doUpload('coll')" style="margin-top:10px">Upload collections</button>
+    <div id="cu-status" style="font-size:11px;color:var(--text2);margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Loaded collections <span id="coll-rc" style="font-weight:400;color:var(--text3)">— 0 rows</span></div>
+    <div class="brow" style="margin-bottom:8px">
+      <input id="cf-filt" placeholder="Filter by name or ID…" oninput="renderColl()" style="width:200px">
+      <button class="btn bghost bsm" onclick="clearColl()" style="margin-left:auto">Clear all</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Period</th><th>Retailer ID</th><th>Retailer name</th><th style="text-align:right">Amount</th><th>Ccy</th><th>Reference</th><th>Invoice</th><th></th></tr></thead>
+      <tbody id="ctbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- CHECKOUTS -->
+<div class="panel" id="panel-chk">
+  <div class="ptitle">Checkouts to Atradius</div>
+  <div class="psub">Upload all open checkouts transferred to Atradius for recovery.</div>
+  <div class="card">
+    <div class="ctitle">Upload checkouts CSV</div>
+    <div class="note-box"><strong>Expected columns:</strong> Retailer name · Checkout ID · Retailer ID · Amount · Due Date · Date Added · Note. Duplicate checkout IDs are automatically skipped.</div>
+    <div style="padding:20px;background:var(--surface2);border-radius:var(--radius-lg);border:2px dashed var(--border2);text-align:center">
+      <div class="uico">↑</div>
+      <strong style="font-size:12px;color:var(--teal-deeper);display:block;margin-bottom:8px">Select checkouts CSV file</strong>
+      <input type="file" id="fu-chk" accept=".csv" style="font-size:12px;font-family:var(--sans);color:var(--text)">
+    </div>
+    <button class="btn bprim" onclick="doUpload('chk')" style="margin-top:10px">Upload checkouts</button>
+    <div id="ku-status" style="font-size:11px;color:var(--text2);margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Loaded checkouts <span id="chk-rc" style="font-weight:400;color:var(--text3)">— 0 rows</span></div>
+    <div class="brow" style="margin-bottom:8px">
+      <input id="kf-filt" placeholder="Filter by name or ID…" oninput="renderChk()" style="width:200px">
+      <button class="btn bghost bsm" onclick="clearChk()" style="margin-left:auto">Clear all</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Retailer name</th><th>Checkout ID</th><th>Retailer ID</th><th style="text-align:right">Amount</th><th>Due date</th><th>Date added</th><th></th></tr></thead>
+      <tbody id="ktbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- CORRECTIONS -->
+<!-- RUN -->
+<div class="panel" id="panel-run">
+  <div class="ptitle">Run Reconciliation</div>
+  <div class="psub">Select the period, set your threshold, and run.</div>
+  <div class="card">
+    <div class="ctitle">Period selection</div>
+    <div class="period-pills" id="ppills"><div class="pp on" onclick="toggleP('ALL')">All periods</div></div>
+    <div class="brow">
+      <label style="margin-bottom:0">Match threshold</label>
+      <input type="number" id="thr" value="80" min="1" max="100" style="width:60px">
+      <span style="font-size:11px;color:var(--text2)">% — checkout marked paid when collected ≥ this % of checkout amount</span>
+      <button class="btn bprim" onclick="runRecon()" style="margin-left:auto">Run reconciliation →</button>
+    </div>
+    <div id="runerr" style="font-size:11px;color:var(--red);margin-top:6px"></div>
+  </div>
+  <div id="res-sec" style="display:none">
+    <div class="metrics" id="mbar"></div>
+    <div class="card">
+      <div class="filter-bar">
+        <label>Status:</label>
+        <select id="fstt" onchange="renderRes()" style="width:155px">
+          <option value="ALL">All statuses</option>
+          <option value="paid">Paid / reconciled</option>
+          <option value="partial">Partial</option>
+          <option value="open">Open</option>
+        </select>
+        <label>Retailer:</label>
+        <input id="fret" placeholder="name or ID…" oninput="renderRes()" style="width:150px">
+        <button class="btn bsm" onclick="exportCSV('all')" style="margin-left:auto">Export all CSV</button>
+        <button class="btn bsm bprim" onclick="exportCSV('reconciled')">Export reconciled CSV</button>
+        <button class="btn bsm blime" onclick="copyReconciledIDs()" id="copy-ids-btn">Copy reconciled IDs</button>
+      </div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th style="width:140px">Retailer</th><th style="width:75px">Retailer ID</th>
+          <th style="width:95px">Checkout ID</th><th style="width:75px">Due date</th>
+          <th style="width:75px">Date added</th><th style="width:50px">Ccy</th>
+          <th style="width:75px;text-align:right">Checkout</th>
+          <th style="width:75px;text-align:right">Collected</th>
+          <th style="width:60px;text-align:right">Coverage</th>
+          <th style="width:88px">Status</th><th>Period(s)</th>
+        </tr></thead>
+        <tbody id="restbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- GAPS & FLAGS -->
+<div class="panel" id="panel-gaps">
+  <div class="ptitle">Gaps &amp; Flags</div>
+  <div class="psub">Collections that need attention, and checkouts awaiting payment.</div>
+
+  <div class="card" style="border-color:#f0c090">
+    <div class="ctitle" style="color:var(--orange)">Collections with no retailer reference — action required</div>
+    <div class="warn-box">These collection lines have no Retailer ID or retailer name in the Atradius file. <strong>Contact Atradius</strong> to request the missing retailer details before these amounts can be reconciled.</div>
+    <div class="tw"><table>
+      <thead><tr><th>Period</th><th>Invoice</th><th style="text-align:right">Amount</th><th>Ccy</th><th>Reference</th></tr></thead>
+      <tbody id="noref-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="twocol">
+    <div class="card">
+      <div class="ctitle" style="color:var(--amber)">Collections — no matching checkout</div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Retailer ID found in collections but not in checkouts file. Check ID Corrections.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Retailer</th><th>ID</th><th>Ccy</th><th style="text-align:right">Amount</th><th>Period</th></tr></thead>
+        <tbody id="gcbody"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Checkouts — no collection received</div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Open checkouts with no payment from Atradius in the selected period.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Retailer</th><th>ID</th><th>Checkout ID</th><th>Ccy</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody id="gkbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="panel" id="panel-hist">
+  <div class="ptitle">Retailer Summary</div>
+  <div class="psub">Cumulative collection progress per retailer across all loaded periods.</div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr>
+      <th>Retailer</th><th>ID</th><th>Ccy</th>
+      <th style="text-align:right">Collected</th><th style="text-align:right">Due</th>
+      <th style="min-width:110px">Recovery</th>
+      <th style="text-align:center">Total</th>
+      <th style="text-align:center">Paid</th>
+      <th style="text-align:center">Partial</th>
+      <th style="text-align:center">Open</th>
+    </tr></thead>
+    <tbody id="histbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- DATA SOURCES -->
+<div class="panel" id="panel-sources">
+  <div class="ptitle">Data Sources</div>
+  <div class="psub">Reference links to the source files used each month.</div>
+  <div class="card">
+    <div class="ctitle">Add source link</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
+      <div><label>URL / Link</label><input id="src-url" placeholder="https://…"></div>
+      <div><label>Description</label><input id="src-desc" placeholder="e.g. Atradius collections sheet"></div>
+      <div style="padding-bottom:1px"><label>&nbsp;</label><button class="btn bprim" onclick="addSource()">Add</button></div>
+    </div>
+    <div id="src-err" style="font-size:11px;color:var(--red);margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Saved sources <span id="src-rc" style="font-weight:400;color:var(--text3)"></span></div>
+    <div class="tw"><table>
+      <thead><tr><th style="width:45%">Link</th><th style="width:45%">Description</th><th></th></tr></thead>
+      <tbody id="srctbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- USER GUIDE -->
+<div class="panel" id="panel-guide">
+  <div class="ptitle">User Guide</div>
+  <div class="psub">How to use the Atradius Reconciliation Tool — step by step.</div>
+
+  <div class="card">
+    <div class="ctitle">Overview</div>
+    <p style="font-size:12px;color:var(--text2);line-height:1.7">This tool reconciles amounts collected by Atradius from retailers against open checkouts transferred to Atradius for recovery. Collections are matched to checkouts by <strong>Retailer ID</strong>, applied oldest due date first, and a checkout is marked paid when the collected amount reaches the match threshold (default 80%).</p>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Monthly workflow</div>
+    <div class="guide-step">
+      <div class="guide-num">1</div>
+      <div class="guide-body">
+        <h4>Upload collections</h4>
+        <p>Go to <strong>Collections</strong>. Export the <em>Atradius invoices</em> sheet as CSV from the Google Drive folder and upload it. Rows are appended — you can upload multiple months and they accumulate.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">2</div>
+      <div class="guide-body">
+        <h4>Upload checkouts</h4>
+        <p>Go to <strong>Checkouts</strong>. Export the <em>Checkouts to Atradius</em> sheet as CSV and upload it. Duplicate checkout IDs are automatically skipped so it is safe to re-upload the full file each month.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">3</div>
+      <div class="guide-body">
+        <h4>Check ID corrections</h4>
+        <p>Go to <strong>ID Corrections</strong>. If Atradius uses a wrong Retailer ID in their file, add a correction here. The pre-loaded correction maps 3392 → 339266 (MAÏKAPO NATURAL). Add any new ones as you discover them.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">4</div>
+      <div class="guide-body">
+        <h4>Run the reconciliation</h4>
+        <p>Go to <strong>Run &amp; Results</strong>. Select the period pill for the current month (or "All periods" for a cumulative view). Keep the threshold at 80% unless instructed otherwise. Click <strong>Run reconciliation</strong>.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">5</div>
+      <div class="guide-body">
+        <h4>Review Gaps &amp; Flags</h4>
+        <p>Go to <strong>Gaps &amp; Flags</strong>. Check the orange panel first — any collections with no retailer reference must be queried with Atradius. Then review unmatched collections (usually an ID mismatch — fix in ID Corrections) and open checkouts awaiting payment.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">6</div>
+      <div class="guide-body">
+        <h4>Export reconciled checkouts &amp; update the tracker</h4>
+        <p>Back in <strong>Run &amp; Results</strong>, click <strong>Export reconciled CSV</strong> — this exports only the paid/reconciled checkouts. Open the reconciled checkouts tracker (link in Data Sources) and paste in the new rows.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">7</div>
+      <div class="guide-body">
+        <h4>Save your data</h4>
+        <p>Click <strong>Save to browser</strong> in the top header. Your collections, checkouts and corrections are saved locally in your browser for next session. Click <strong>Restore saved</strong> next time you open the tool.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Status definitions</div>
+    <div class="status-legend">
+      <div class="sl-item" style="background:var(--green-bg)"><strong style="color:var(--green)">Paid in full</strong><span style="color:var(--green);font-size:11px">100% of checkout amount collected.</span></div>
+      <div class="sl-item" style="background:var(--blue-bg)"><strong style="color:var(--blue)">Paid ≥ threshold</strong><span style="color:var(--blue);font-size:11px">Collected ≥ threshold (e.g. 80%). Checkout reconciled.</span></div>
+      <div class="sl-item" style="background:var(--amber-bg)"><strong style="color:var(--amber)">Partial</strong><span style="color:var(--amber);font-size:11px">Some collected but below threshold. Remains open.</span></div>
+      <div class="sl-item" style="background:var(--surface2)"><strong style="color:var(--text2)">Open</strong><span style="color:var(--text2);font-size:11px">No collection received for this retailer.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">CSV file formats</div>
+    <p style="font-size:12px;margin-bottom:10px;color:var(--text2)">Both files are exported from the Google Drive folder linked in Data Sources.</p>
+    <table>
+      <thead><tr><th>File</th><th>Columns (in order)</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">Atradius collections</td><td class="mono">Remittance Date · Retailer ID · Invoice number · Recovered amount · Currency · Reference · Retailer name</td></tr>
+        <tr><td style="font-weight:500">Checkouts to Atradius</td><td class="mono">Retailer name · Checkout ID · Retailer ID · Amount · Due Date · Date Added · Note</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+let CD=[],KD=[],RR=[],XC=[],noRefColl=[],selP=new Set(['ALL']);
+let srcData=[
+  {url:'https://drive.google.com/drive/u/0/folders/1ZQrN2P21qVdgHeINP1-H1gDNsABhtZLo',desc:'Google Drive — source CSV files (collections & checkouts)'},
+  {url:'https://docs.google.com/spreadsheets/d/15zN_Yxn5TjiA9WUdEJHE6lmjtIbsl4Hlk1PLAEhL1lI/edit',desc:'Reconciled checkouts tracker — paste exported reconciled rows here after each run'}
+];
+
+function goNav(n){
+  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(e=>e.classList.remove('on'));
+  document.getElementById('ni-'+n).classList.add('on');
+  document.getElementById('panel-'+n).classList.add('on');
+}
+
+function parseCSV(txt){
+  return txt.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(line=>{
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){inQ=!inQ;continue;}if(c===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=c;}
+    cols.push(cur.trim());return cols;
+  });
+}
+function pa(v){if(!v&&v!==0)return 0;const n=parseFloat(String(v).replace(/[€£$\s]/g,'').replace(/,(?=\d{3})/g,'').replace(',','.'));return isNaN(n)?0:n;}
+function isHdr(r){return r.join(' ').toLowerCase().match(/retailer|checkout|amount|date|remit/);}
+
+function doUpload(type){
+  const id = type==='coll' ? 'fu-coll' : 'fu-chk';
+  const input = document.getElementById(id);
+  if(!input.files || !input.files[0]){
+    alert('Please select a CSV file first.');return;
+  }
+  const f = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const text = e.target.result;
+    const rows = parseCSV(text);
+    if(!rows || rows.length < 2){ alert('File appears empty or invalid.'); return; }
+    const data = isHdr(rows[0]) ? rows.slice(1) : rows;
+    let added = 0;
+    if(type==='coll'){
+      data.forEach(r=>{
+        if(r.length < 4) return;
+        const amt = pa(r[3]);
+        const rid = String((r[1]||'').trim()).replace(/,/g,'');
+        const rname = (r[6]||'').trim().toUpperCase();
+        if(!rid && !rname){
+          noRefColl.push({period:(r[0]||'').trim(),invoice:(r[2]||'').trim(),amount:amt,currency:(r[4]||'EUR').trim().toUpperCase(),ref:(r[5]||'').trim()});
+          return;
+        }
+        if(amt===0) return;
+        CD.push({period:(r[0]||'').trim(),retailerId:rid,invoice:(r[2]||'').trim(),amount:amt,currency:(r[4]||'EUR').trim().toUpperCase()||'EUR',ref:(r[5]||'').trim(),name:rname});
+        added++;
+      });
+      document.getElementById('cu-status').textContent = '✓ '+added+' rows loaded' + (noRefColl.length ? ' · ⚠ '+noRefColl.length+' rows with no retailer reference (see Gaps & Flags)' : '');
+      renderColl(); updCounts(); populateP();
+    } else {
+      const seen = new Set(KD.map(r=>r.checkoutId+'|'+r.retailerId));
+      data.forEach(r=>{
+        if(r.length < 4) return;
+        const amt=pa(r[3]), cid=String((r[1]||'').trim()).replace(/,/g,''), rid=String((r[2]||'').trim()).replace(/,/g,''), nm=(r[0]||'').trim();
+        if(!amt||!cid||!rid||nm==='#N/A') return;
+        const k=cid+'|'+rid; if(seen.has(k)) return; seen.add(k);
+        KD.push({name:nm,checkoutId:cid,retailerId:rid,amount:amt,dueDate:(r[4]||'').trim(),date:(r[5]||'').trim()});
+        added++;
+      });
+      document.getElementById('ku-status').textContent = '✓ '+added+' new rows loaded';
+      renderChk(); updCounts();
+    }
+  };
+  reader.onerror = function(){ alert('Failed to read file.'); };
+  reader.readAsText(f);
+}
+
+function fmt(n){return parseFloat(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function renderColl(){
+  const f=(document.getElementById('cf-filt').value||'').toUpperCase();
+  const rows=f?CD.filter(r=>r.name.includes(f)||r.retailerId.includes(f)):CD;
+  document.getElementById('coll-rc').textContent='— '+CD.length+' rows';
+  let h='';
+  if(!rows.length)h='<tr><td colspan="8" class="empty">No collections loaded. Upload a CSV above.</td></tr>';
+  rows.forEach(r=>{const idx=CD.indexOf(r);h+=`<tr><td class="mono">${r.period}</td><td class="mono">${r.retailerId}</td><td>${r.name}</td><td style="text-align:right" class="mono">${fmt(r.amount)}</td><td class="mono">${r.currency||'EUR'}</td><td class="mono">${r.ref||'—'}</td><td class="mono">${r.invoice||'—'}</td><td><button class="btn bsm bdanger" onclick="CD.splice(${idx},1);renderColl();updCounts()">×</button></td></tr>`;});
+  document.getElementById('ctbody').innerHTML=h;
+}
+
+function renderChk(){
+  const f=(document.getElementById('kf-filt').value||'').toUpperCase();
+  const rows=f?KD.filter(r=>(r.name||'').toUpperCase().includes(f)||r.retailerId.includes(f)):KD;
+  document.getElementById('chk-rc').textContent='— '+KD.length+' rows';
+  let h='';
+  if(!rows.length)h='<tr><td colspan="7" class="empty">No checkouts loaded. Upload a CSV above.</td></tr>';
+  rows.forEach(r=>{const idx=KD.indexOf(r);h+=`<tr><td>${r.name}</td><td class="mono">${r.checkoutId}</td><td class="mono">${r.retailerId}</td><td style="text-align:right" class="mono">${fmt(r.amount)}</td><td class="mono">${r.dueDate||'—'}</td><td class="mono">${r.date||'—'}</td><td><button class="btn bsm bdanger" onclick="KD.splice(${idx},1);renderChk();updCounts()">×</button></td></tr>`;});
+  document.getElementById('ktbody').innerHTML=h;
+}
+
+function clearColl(){if(confirm('Clear all collection data?')){CD=[];noRefColl=[];renderColl();updCounts();populateP();}}
+function clearChk(){if(confirm('Clear all checkout data?')){KD=[];renderChk();updCounts();}}
+
+function updCounts(){
+  document.getElementById('nb-coll').textContent=CD.length;
+  document.getElementById('nb-chk').textContent=KD.length;
+  document.getElementById('header-meta').textContent=CD.length+' collection rows · '+KD.length+' checkout rows';
+}
+
+let selPeriods=new Set(['ALL']);
+function populateP(){
+  const periods=[...new Set(CD.map(r=>r.period))].filter(Boolean).sort();
+  const c=document.getElementById('ppills');
+  c.innerHTML=`<div class="pp${selPeriods.has('ALL')?' on':''}" onclick="toggleP('ALL')">All periods</div>`;
+  periods.forEach(p=>{const d=document.createElement('div');d.className='pp'+(selPeriods.has(p)?' on':'');d.textContent=p;d.onclick=()=>toggleP(p);c.appendChild(d);});
+}
+function toggleP(p){
+  if(p==='ALL'){selPeriods=new Set(['ALL']);}
+  else{selPeriods.delete('ALL');selPeriods.has(p)?selPeriods.delete(p):selPeriods.add(p);if(!selPeriods.size)selPeriods.add('ALL');}
+  populateP();
+}
+
+function runRecon(){
+  const err=document.getElementById('runerr');err.textContent='';
+  if(!CD.length){err.textContent='No collection data loaded. Go to Collections to upload a CSV.';return;}
+  if(!KD.length){err.textContent='No checkout data loaded. Go to Checkouts to upload a CSV.';return;}
+  const thr=parseFloat(document.getElementById('thr').value)/100;
+  const useAll=selPeriods.has('ALL');
+  const wc=CD.filter(r=>useAll||selPeriods.has(r.period));
+  const cById={},pById={},nById={},curById={};
+  for(const c of wc){
+    cById[c.retailerId]=(cById[c.retailerId]||0)+c.amount;
+    if(!pById[c.retailerId])pById[c.retailerId]=new Set();pById[c.retailerId].add(c.period);
+    if(!nById[c.retailerId])nById[c.retailerId]=c.name;
+    if(!curById[c.retailerId])curById[c.retailerId]=(c.currency||'EUR').trim().toUpperCase()||'EUR';
+  }
+  const kById={};
+  for(const k of KD){if(!kById[k.retailerId])kById[k.retailerId]=[];kById[k.retailerId].push({...k,collected:0,status:'open',periods:[]});}
+  RR=[];XC=[];const mid=new Set();
+  for(const[rid,tot] of Object.entries(cById)){
+    const chks=kById[rid];
+    if(!chks){XC.push({name:nById[rid]||rid,retailerId:rid,amount:tot,currency:curById[rid]||'EUR',periods:[...pById[rid]]});continue;}
+    mid.add(rid);
+    const sorted=[...chks].sort((a,b)=>{
+      const pd=d=>{if(!d)return new Date(0);const p=d.split('/');if(p.length===3){const[p1,p2,p3]=p;return p3.length===4?new Date(`${p3}-${p2.padStart(2,'0')}-${p1.padStart(2,'0')}`):new Date(`${p1}-${p2.padStart(2,'0')}-${p3.padStart(2,'0')}`);}return new Date(d);};
+      return pd(a.dueDate||a.date)-pd(b.dueDate||b.date);
+    });
+    let rem=tot;
+    for(const c of sorted){
+      const cov=rem/c.amount;
+      if(cov>=thr){c.collected=Math.min(rem,c.amount);c.status=cov>=1?'paid-full':'paid-threshold';c.periods=[...pById[rid]];c.currency=curById[rid]||'EUR';rem-=c.collected;rem=Math.max(0,rem);}
+      else if(rem>0.005){c.collected=rem;c.status='partial';c.periods=[...pById[rid]];c.currency=curById[rid]||'EUR';rem=0;}
+      else{c.currency=curById[rid]||'EUR';}
+      RR.push(c);
+    }
+    if(rem>0.01)XC.push({name:nById[rid]||rid,retailerId:rid,amount:parseFloat(rem.toFixed(2)),currency:curById[rid]||'EUR',periods:[...pById[rid]]});
+  }
+  for(const[rid,chks] of Object.entries(kById)){if(!mid.has(rid))chks.forEach(c=>RR.push({...c,collected:0,status:'open',periods:[]}));}
+  document.getElementById('res-sec').style.display='';
+  renderMetrics();renderRes();renderGaps();renderHist();
+}
+
+function sb(s){
+  if(s==='paid-full')return '<span class="badge bg">Paid in full</span>';
+  if(s==='paid-threshold')return '<span class="badge bb">Paid ≥ thr.</span>';
+  if(s==='partial')return '<span class="badge ba">Partial</span>';
+  return '<span class="badge bgr">Open</span>';
+}
+
+function renderMetrics(){
+  const tot=RR.length,paid=RR.filter(r=>r.status==='paid-full'||r.status==='paid-threshold').length,
+    part=RR.filter(r=>r.status==='partial').length,open=RR.filter(r=>r.status==='open').length,
+    due=RR.reduce((s,r)=>s+r.amount,0),coll=RR.reduce((s,r)=>s+(r.collected||0),0),
+    pct=due>0?Math.round(coll/due*100):0;
+  const noref=noRefColl.length;
+  document.getElementById('mbar').innerHTML=`
+    <div class="met"><div class="ml">Total checkouts</div><div class="mv">${tot}</div></div>
+    <div class="met lime-accent"><div class="ml">Paid / reconciled</div><div class="mv">${paid}</div><div class="ms">${Math.round(paid/tot*100||0)}%</div></div>
+    <div class="met"><div class="ml">Partial</div><div class="mv" style="color:var(--amber)">${part}</div></div>
+    <div class="met"><div class="ml">Open</div><div class="mv">${open}</div></div>
+    <div class="met"><div class="ml">Recovery</div><div class="mv">${pct}%</div><div class="ms">${fmt(coll)} / ${fmt(due)}</div></div>
+    ${noref?`<div class="met flag-accent"><div class="ml">No-reference flags</div><div class="mv">${noref}</div><div class="ms">query Atradius</div></div>`:''}`;
+}
+
+function renderRes(){
+  const sf=document.getElementById('fstt').value,rf=(document.getElementById('fret').value||'').toUpperCase();
+  let rows=RR;
+  if(sf!=='ALL'){if(sf==='paid')rows=rows.filter(r=>r.status==='paid-full'||r.status==='paid-threshold');else rows=rows.filter(r=>r.status===sf);}
+  if(rf)rows=rows.filter(r=>(r.name||'').toUpperCase().includes(rf)||(r.retailerId||'').includes(rf));
+  const byR={};for(const r of rows){if(!byR[r.retailerId])byR[r.retailerId]=[];byR[r.retailerId].push(r);}
+  let h='';
+  for(const[rid,rs] of Object.entries(byR)){
+    const tc=rs.reduce((s,r)=>s+(r.collected||0),0),td=rs.reduce((s,r)=>s+r.amount,0),cur=rs[0].currency||'—';
+    h+=`<tr class="trg"><td colspan="11">${rs[0].name||rid} — ID ${rid} &nbsp;·&nbsp; ${fmt(tc)} / ${fmt(td)} ${cur}</td></tr>`;
+    for(const r of rs){
+      const p=r.amount>0?Math.round((r.collected||0)/r.amount*100):0;
+      h+=`<tr><td>${r.name||''}</td><td class="mono">${r.retailerId}</td><td class="mono">${r.checkoutId}</td><td class="mono">${r.dueDate||'—'}</td><td class="mono">${r.date||'—'}</td><td class="mono">${r.currency||'—'}</td><td style="text-align:right" class="mono">${fmt(r.amount)}</td><td style="text-align:right" class="mono">${r.collected>0?fmt(r.collected):'—'}</td><td style="text-align:right" class="mono">${r.amount>0?p+'%':'—'}</td><td>${sb(r.status)}</td><td class="mono" style="font-size:10px">${(r.periods||[]).join(', ')}</td></tr>`;
+    }
+  }
+  if(!h)h='<tr><td colspan="11" class="empty">No results match filters.</td></tr>';
+  document.getElementById('restbody').innerHTML=h;
+}
+
+function renderGaps(){
+  // No-reference flagged rows
+  let hn='';
+  if(!noRefColl.length)hn='<tr><td colspan="5" class="empty">None — all collection rows have a Retailer ID or name.</td></tr>';
+  noRefColl.forEach(u=>{hn+=`<tr class="flag-row"><td class="mono">${u.period}</td><td class="mono">${u.invoice||'—'}</td><td style="text-align:right" class="mono">${fmt(u.amount)}</td><td class="mono">${u.currency||'—'}</td><td class="mono">${u.ref||'—'}</td></tr>`;});
+  document.getElementById('noref-tbody').innerHTML=hn;
+  // Unmatched collections
+  let hc='';
+  if(!XC.length)hc='<tr><td colspan="5" class="empty">None — all collections matched.</td></tr>';
+  XC.forEach(u=>{hc+=`<tr><td>${u.name}</td><td class="mono">${u.retailerId}</td><td class="mono">${u.currency||'—'}</td><td style="text-align:right" class="mono">${fmt(u.amount)}</td><td class="mono" style="font-size:10px">${(u.periods||[]).join(', ')}</td></tr>`;});
+  document.getElementById('gcbody').innerHTML=hc;
+  // Open checkouts
+  const ok=RR.filter(r=>r.status==='open');
+  let hk='';
+  if(!ok.length)hk='<tr><td colspan="5" class="empty">None — all checkouts have at least partial collection.</td></tr>';
+  ok.forEach(u=>{hk+=`<tr><td>${u.name||''}</td><td class="mono">${u.retailerId}</td><td class="mono">${u.checkoutId}</td><td class="mono">${u.currency||'—'}</td><td style="text-align:right" class="mono">${fmt(u.amount)}</td></tr>`;});
+  document.getElementById('gkbody').innerHTML=hk;
+}
+
+function renderHist(){
+  const byR={};
+  for(const r of RR){
+    if(!byR[r.retailerId])byR[r.retailerId]={name:r.name||r.retailerId,id:r.retailerId,coll:0,due:0,tot:0,paid:0,part:0,open:0,currency:r.currency||'—'};
+    const b=byR[r.retailerId];b.due+=r.amount;b.coll+=(r.collected||0);b.tot++;
+    if(!b.currency||b.currency==='—')b.currency=r.currency||'—';
+    if(r.status==='paid-full'||r.status==='paid-threshold')b.paid++;else if(r.status==='partial')b.part++;else b.open++;
+  }
+  const rows=Object.values(byR).sort((a,b)=>b.coll-a.coll);
+  let h='';
+  for(const r of rows){
+    const p=r.due>0?Math.round(r.coll/r.due*100):0;
+    const fc=p>=80?'var(--green)':p>=40?'var(--amber)':'var(--red)';
+    h+=`<tr><td>${r.name}</td><td class="mono">${r.id}</td><td class="mono">${r.currency}</td><td style="text-align:right" class="mono">${fmt(r.coll)}</td><td style="text-align:right" class="mono">${fmt(r.due)}</td><td><div class="progress-wrap"><span class="mono" style="min-width:28px">${p}%</span><div class="pbg"><div class="pbf" style="width:${Math.min(p,100)}%;background:${fc}"></div></div></div></td><td style="text-align:center">${r.tot}</td><td style="text-align:center;color:var(--green);font-weight:600">${r.paid}</td><td style="text-align:center;color:var(--amber);font-weight:600">${r.part}</td><td style="text-align:center">${r.open}</td></tr>`;
+  }
+  if(!h)h='<tr><td colspan="10" class="empty">Run reconciliation first.</td></tr>';
+  document.getElementById('histbody').innerHTML=h;
+}
+
+function exportCSV(mode){
+  if(!RR.length){alert('Run reconciliation first.');return;}
+  const data=mode==='reconciled'?RR.filter(r=>r.status==='paid-full'||r.status==='paid-threshold'):RR;
+  if(!data.length){alert('No reconciled checkouts to export.');return;}
+  const rows=[['Retailer','Retailer ID','Checkout ID','Due Date','Date Added','Currency','Amount Due','Collected','Coverage %','Status','Periods']];
+  for(const r of data){
+    const p=r.amount>0?((r.collected||0)/r.amount*100).toFixed(1):'0';
+    rows.push([r.name||'',r.retailerId,r.checkoutId,r.dueDate||'',r.date||'',r.currency||'',r.amount.toFixed(2),(r.collected||0).toFixed(2),p,r.status,(r.periods||[]).join('; ')]);
+  }
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='atradius_'+(mode==='reconciled'?'reconciled_':'')+'reconciliation_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+function copyReconciledIDs(){
+  if(!RR.length){alert('Run reconciliation first.');return;}
+  const reconciled=RR.filter(r=>r.status==='paid-full'||r.status==='paid-threshold');
+  if(!reconciled.length){alert('No reconciled checkouts found.');return;}
+  const text=reconciled.map(r=>r.checkoutId).join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copy-ids-btn');
+    const orig=btn.textContent;
+    btn.textContent='✓ '+reconciled.length+' IDs copied!';
+    btn.style.background='var(--lime)';btn.style.color='var(--teal-deeper)';
+    setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.style.color='';},2500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn=document.getElementById('copy-ids-btn');
+    const orig=btn.textContent;
+    btn.textContent='✓ '+reconciled.length+' IDs copied!';
+    btn.style.background='var(--lime)';btn.style.color='var(--teal-deeper)';
+    setTimeout(()=>{btn.textContent=orig;btn.style.background='';btn.style.color='';},2500);
+  });
+}
+  const url=document.getElementById('src-url').value.trim(),desc=document.getElementById('src-desc').value.trim();
+  const err=document.getElementById('src-err');
+  if(!url||!desc){err.textContent='Both URL and description are required.';return;}
+  err.textContent='';srcData.push({url,desc});
+  document.getElementById('src-url').value='';document.getElementById('src-desc').value='';
+  renderSources();
+}
+function renderSources(){
+  document.getElementById('src-rc').textContent='— '+srcData.length+' links';
+  document.getElementById('nb-src').textContent=srcData.length;
+  let h='';
+  if(!srcData.length)h='<tr><td colspan="3" class="empty">No sources saved.</td></tr>';
+  srcData.forEach((s,idx)=>{
+    const d=s.url.length>55?s.url.slice(0,52)+'…':s.url;
+    h+=`<tr><td><a href="${s.url}" target="_blank" style="color:var(--blue);font-size:11px;font-family:var(--mono);text-decoration:none;word-break:break-all" title="${s.url}">${d}</a></td><td style="font-size:12px">${s.desc}</td><td><button class="btn bsm bdanger" onclick="srcData.splice(${idx},1);renderSources()">×</button></td></tr>`;
+  });
+  document.getElementById('srctbody').innerHTML=h;
+}
+renderSources();
+
+function saveToStorage(){
+  try{
+    localStorage.setItem('aks_atradius_recon',JSON.stringify({CD,KD,srcData,noRefColl,savedAt:new Date().toISOString()}));
+    const d=new Date();document.getElementById('save-status').textContent='Saved '+d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }catch(e){alert('Could not save: '+e.message);}
+}
+function loadFromStorage(){
+  try{
+    const raw=localStorage.getItem('aks_atradius_recon');
+    if(!raw){alert('No saved data found in this browser.');return;}
+    const pl=JSON.parse(raw);
+    if(!confirm('Load saved data from '+new Date(pl.savedAt).toLocaleString()+'?\n\nThis will replace your current unsaved data.'))return;
+    CD=pl.CD||[];KD=pl.KD||[];noRefColl=pl.noRefColl||[];
+    srcData=pl.srcData||srcData;
+    renderColl();renderChk();renderSources();updCounts();populateP();
+    document.getElementById('save-status').textContent='Restored from '+new Date(pl.savedAt).toLocaleDateString();
+  }catch(e){alert('Could not load: '+e.message);}
+}
+function clearStorage(){
+  if(!confirm('Permanently delete all saved browser data?'))return;
+  localStorage.removeItem('aks_atradius_recon');
+  document.getElementById('save-status').textContent='Saved data cleared';
+  setTimeout(()=>{document.getElementById('save-status').textContent='';},3000);
+}
+window.addEventListener('load',()=>{
+  try{const raw=localStorage.getItem('aks_atradius_recon');if(raw){const pl=JSON.parse(raw);document.getElementById('save-status').textContent='Saved data available — '+new Date(pl.savedAt).toLocaleDateString();}}catch(e){}
+});
+</script>
+</body>
+</html>
