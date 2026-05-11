@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKS Finance — Atradius Tools</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+:root{--teal:#2A6B70;--teal-dark:#1A3A3F;--teal-deeper:#0F2428;--teal-light:#3D8C91;--teal-mid:#1E4A50;--lime:#C8F53C;--lime-dark:#A8D028;--bg:#F0F4F4;--surface:#FFFFFF;--surface2:#E8EEEE;--border:#D0DADB;--border2:#B0C4C6;--text:#0F2428;--text2:#3A5C60;--text3:#7A9598;--green:#1E6B3F;--green-bg:#D8F5E5;--amber:#7A5010;--amber-bg:#FDF0DC;--red:#8B2020;--red-bg:#FCEAEA;--orange:#7A3E0A;--orange-bg:#FEF0E0;--mono:'DM Mono',monospace;--sans:'Poppins',sans-serif;--radius:8px;--radius-lg:14px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh}
+header{background:var(--teal-deeper);color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;border-bottom:3px solid var(--lime)}
+.logo{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--lime);flex-shrink:0}
+.logo span{font-weight:300;opacity:.55;font-size:11px;margin-left:2px}
+.hacts{display:flex;gap:5px;align-items:center}
+.hbtn{padding:4px 11px;font-size:10px;font-family:var(--sans);font-weight:500;border-radius:20px;cursor:pointer;border:1px solid rgba(200,245,60,.3);background:transparent;color:rgba(200,245,60,.8);white-space:nowrap;transition:all .15s}
+.hbtn:hover{background:rgba(200,245,60,.12);color:var(--lime)}
+.hbtn.save{border-color:rgba(200,245,60,.5);color:var(--lime)}
+.hbtn.clr{border-color:rgba(255,140,140,.3);color:rgba(255,160,160,.8)}
+.hbtn.clr:hover{background:rgba(255,100,100,.1);color:#ffaaaa}
+.ss{font-size:9px;color:rgba(200,245,60,.4);font-family:var(--mono)}
+.hm{font-size:10px;color:rgba(255,255,255,.3);font-family:var(--mono)}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 88px)}
+nav{background:var(--teal-dark);padding:16px 0;position:sticky;top:88px;height:calc(100vh - 88px);overflow-y:auto}
+.ns{padding:0 16px 4px;font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,245,60,.45);margin-top:16px}
+.ns:first-child{margin-top:0}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:11px;color:rgba(255,255,255,.55);cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.ni:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
+.ni.on{color:#fff;border-left-color:var(--lime);background:rgba(200,245,60,.1);font-weight:600}
+.ndot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+.ni.on .ndot{background:var(--lime)}
+.nc{margin-left:auto;background:rgba(200,245,60,.15);color:var(--lime);font-size:8px;font-family:var(--mono);padding:1px 6px;border-radius:10px;font-weight:600}
+main{padding:24px;overflow-y:auto}
+.panel{display:none}.panel.on{display:block}
+.pt{font-size:20px;font-weight:700;margin-bottom:3px;color:var(--teal-deeper)}
+.ps{font-size:11px;color:var(--text2);margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(42,107,112,.05)}
+.ct{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+label{font-size:10px;font-weight:500;color:var(--text2);display:block;margin-bottom:3px}
+input[type=text],input[type=number],select{width:100%;padding:7px 10px;font-size:11px;font-family:var(--sans);border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;transition:all .15s}
+input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,107,112,.08)}
+input[type=file]{font-size:11px;cursor:pointer;padding:5px 0;display:block;width:100%;background:transparent;border:none;outline:none}
+.btn{padding:7px 16px;font-size:11px;font-family:var(--sans);font-weight:600;border:1.5px solid var(--border2);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--teal);white-space:nowrap;transition:all .15s;letter-spacing:.02em}
+.btn:hover{background:var(--surface2);border-color:var(--teal)}
+.bp{background:var(--teal);color:#fff;border-color:var(--teal)}
+.bp:hover{background:var(--teal-light);border-color:var(--teal-light)}
+.blime{background:var(--lime);color:var(--teal-deeper);border-color:var(--lime-dark);font-weight:700}
+.blime:hover{background:var(--lime-dark)}
+.bsm{padding:4px 12px;font-size:10px}
+.bgh{border-color:transparent;color:var(--text2)}
+.bgh:hover{background:var(--surface2);color:var(--teal)}
+.bdn{background:var(--red-bg);color:var(--red);border-color:var(--red-bg)}
+.bdn:hover{background:#f5d5d5}
+.brow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.met{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;position:relative;overflow:hidden}
+.met::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)}
+.met .ml{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px}
+.met .mv{font-size:22px;font-weight:700;line-height:1.1;color:var(--teal-deeper)}
+.met .ms{font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+.met.la::before{background:var(--lime)}.met.la .mv{color:var(--green)}
+.met.fa::before{background:#f0a050}.met.fa .mv{color:var(--orange)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:7px 10px;border-bottom:2px solid var(--teal);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:var(--surface2);white-space:nowrap}
+td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.mono{font-family:var(--mono);font-size:10px}
+.trg td{background:linear-gradient(90deg,rgba(42,107,112,.07),transparent)!important;font-weight:600;font-size:10px;color:var(--teal);border-left:3px solid var(--lime)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.bg{background:#D8F5E5;color:var(--green)}.bb{background:#D8EEF5;color:#1B5A8A}.ba{background:var(--amber-bg);color:var(--amber)}.bgr{background:var(--surface2);color:var(--text2)}
+.nb{background:rgba(42,107,112,.07);border:1.5px solid rgba(42,107,112,.2);border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--teal-dark);line-height:1.6;margin-bottom:12px}
+.wb{background:var(--orange-bg);border:1.5px solid #f0c090;border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--orange);line-height:1.6;margin-bottom:12px}
+.ppills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.pp{padding:5px 13px;font-size:10px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;color:var(--text2);font-weight:500;transition:all .15s}
+.pp.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+.pp:hover:not(.on){border-color:var(--teal);color:var(--teal)}
+.period-select{padding:8px 14px;font-size:12px;font-family:var(--sans);border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;cursor:pointer;min-width:220px;margin-bottom:14px}
+.period-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,107,112,.08)}
+.fbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.fbar label{font-size:11px;color:var(--text2);margin-bottom:0}
+.fbar select,.fbar input{width:auto}
+.pwrap{display:flex;align-items:center;gap:6px}
+.pbg{flex:1;height:4px;background:var(--border);border-radius:2px;min-width:40px}
+.pbf{height:4px;border-radius:2px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--teal-light);border-radius:3px}
+.empty{text-align:center;padding:24px;color:var(--text3);font-size:11px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.flr td{background:#FEF0E0!important}
+.uz{padding:20px;background:var(--surface2);border-radius:var(--radius-lg);border:2px dashed var(--border2);text-align:center;margin-bottom:10px}
+.uz strong{font-size:12px;color:var(--teal-deeper);display:block;margin-bottom:8px}
+.upload-btn-div{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:var(--teal);color:#fff;border-radius:var(--radius-lg);font-family:var(--sans);font-size:13px;font-weight:600;flex-shrink:0;pointer-events:none}
+.upload-zone-wrap:hover{border-color:var(--teal);background:rgba(42,107,112,.06)}
+.upload-zone-wrap:hover .upload-btn-div{background:var(--teal-light)}
+.upload-btn .ub-icon{width:32px;height:32px;border-radius:50%;background:var(--lime);color:var(--teal-deeper);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.upload-zone-wrap{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--surface2);border-radius:var(--radius-lg);border:2px dashed var(--border2);margin-bottom:10px;flex-wrap:wrap}
+.upload-zone-wrap .uzw-info{flex:1}
+.uzw-info strong{font-size:13px;font-weight:600;color:var(--teal-deeper);display:block;margin-bottom:2px}
+.uzw-info span{font-size:11px;color:var(--text3)}
+.drop-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--border2);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);white-space:nowrap;position:relative;overflow:hidden;transition:all .15s}
+.drop-btn:hover{background:var(--surface2);border-color:var(--teal)}
+.drop-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.export-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;min-width:200px;padding:6px;display:none}
+.export-menu.open{display:block}
+.export-menu button{display:block;width:100%;text-align:left;padding:8px 12px;font-size:11px;font-family:var(--sans);font-weight:500;color:var(--text);background:none;border:none;border-radius:var(--radius);cursor:pointer}
+.export-menu button:hover{background:var(--surface2);color:var(--teal)}
+.step-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--teal-deeper);color:var(--lime);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text h3{color:var(--text);font-size:13px;font-weight:600;margin-bottom:2px}
+.step-text p{color:var(--text2);font-size:11px}
+.gs{display:flex;gap:12px;margin-bottom:16px}
+.gn{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.gb h4{font-size:12px;font-weight:600;margin-bottom:3px;color:var(--teal-deeper)}
+.gb p{font-size:11px;color:var(--text2);line-height:1.6}
+.sl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.si{padding:9px 11px;border-radius:var(--radius);font-size:10px}
+.si strong{display:block;font-size:11px;margin-bottom:2px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+function switchTool(t){
+  var re=document.getElementById('tool-recon');
+  var es=document.getElementById('tool-esc');
+  var pr=document.getElementById('tool-pill-recon');
+  var pe=document.getElementById('tool-pill-esc');
+  if(re)re.style.display=t==='recon'?'block':'none';
+  if(es)es.style.display=t==='esc'?'block':'none';
+  if(pr&&pe){
+    if(t==='recon'){
+      pr.style.background='var(--lime)';pr.style.color='var(--teal-deeper)';
+      pe.style.background='transparent';pe.style.color='rgba(200,245,60,.7)';
+    } else {
+      pe.style.background='var(--lime)';pe.style.color='var(--teal-deeper)';
+      pr.style.background='transparent';pr.style.color='rgba(200,245,60,.7)';
+      if(window.eRenderPublic)window.eRenderPublic();
+    }
+  }
+}
+</script>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:100">
+  <header style="position:relative">
+    <div class="logo"><div class="ldot"></div>AKS <span>Payment Operations</span></div>
+    <div style="display:flex;gap:0;background:rgba(255,255,255,.08);border-radius:20px;padding:3px;margin:0 auto">
+      <button id="tool-pill-recon" onclick="switchTool('recon')" style="padding:4px 14px;font-size:10px;font-family:var(--sans);font-weight:600;border:none;border-radius:17px;cursor:pointer;background:var(--lime);color:var(--teal-deeper);letter-spacing:.02em;transition:all .15s">Reconciliation</button>
+      <button id="tool-pill-esc" onclick="switchTool('esc')" style="padding:4px 14px;font-size:10px;font-family:var(--sans);font-weight:600;border:none;border-radius:17px;cursor:pointer;background:transparent;color:rgba(200,245,60,.7);letter-spacing:.02em;transition:all .15s">Escalation</button>
+    </div>
+  </header>
+  <div id="save-bar" style="background:var(--teal-mid);border-bottom:1px solid rgba(255,255,255,.08);padding:0 20px;height:36px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span id="ss" style="font-size:9px;color:rgba(200,245,60,.5);font-family:var(--mono)"></span>
+      <span id="hm" style="font-size:9px;color:rgba(255,255,255,.3);font-family:var(--mono)">No data loaded</span>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="hbtn save" onclick="sv()" style="padding:3px 11px;font-size:9px">Save to browser</button>
+      <button class="hbtn" onclick="rs()" style="padding:3px 11px;font-size:9px">Restore saved</button>
+      <button class="hbtn clr" onclick="clrS()" style="padding:3px 11px;font-size:9px">Clear saved</button>
+    </div>
+  </div>
+</div>
+<div id="tool-recon" style="display:block">
+<div class="shell">
+<nav>
+  <div class="ns">Data</div>
+  <div class="ni on" id="ni-c" onclick="gn('c')"><div class="ndot"></div>Collections<span class="nc" id="nc-c">0</span></div>
+  <div class="ni" id="ni-k" onclick="gn('k')"><div class="ndot"></div>Checkouts<span class="nc" id="nc-k">0</span></div>
+  <div class="ns">Reconcile</div>
+  <div class="ni" id="ni-r" onclick="gn('r')"><div class="ndot"></div>Run &amp; Results</div>
+  <div class="ni" id="ni-t" onclick="gn('t')"><div class="ndot"></div>Sync Reconciled</div>
+  <div class="ns">Review</div>
+  <div class="ni" id="ni-g" onclick="gn('g')"><div class="ndot"></div>Gaps &amp; Flags</div>
+  <div class="ni" id="ni-h" onclick="gn('h')"><div class="ndot"></div>Retailer Summary</div>
+  <div class="ns">Settings &amp; Help</div>
+  <div class="ni" id="ni-s" onclick="gn('s')"><div class="ndot"></div>Data Sources<span class="nc" id="nc-s">2</span></div>
+  <div class="ni" id="ni-u" onclick="gn('u')"><div class="ndot"></div>User Guide</div>
+</nav>
+<main>
+
+<div class="panel on" id="panel-c">
+  <div class="pt">Collections</div>
+  <div class="ps">Upload a CSV manually, or fetch directly from your Atradius remittance emails in Gmail.</div>
+
+  <!-- GMAIL FETCH CARD -->
+  <div class="card" style="border-left:3px solid var(--lime);padding:12px 16px">
+    <div class="ct" style="color:var(--teal);margin-bottom:6px">Import from Gmail</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:8px">Copy the prompt below, open Claude.ai, paste it (replacing the month/year), download the CSV and upload it below.</p>
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:9px 12px;font-size:10px;font-family:var(--mono);color:var(--teal-deeper);line-height:1.7;margin-bottom:10px;user-select:all">"Fetch Atradius remitance advice for [Month Year] and give me the collections CSV for the reconciliation tool"</div>
+    <a href="https://claude.ai/new" target="_blank" class="btn bp bsm" style="text-decoration:none">Open Claude ↗</a>
+  </div>
+
+    <!-- CSV UPLOAD CARD -->
+  <div class="card">
+    <div class="ct">Or upload CSV manually</div>
+    <div class="nb"><strong>Columns:</strong> Remittance Date · Retailer ID · Invoice number · Recovered amount · Currency · Reference · Retailer name</div>
+    <input type="file" id="fu-c" accept=".csv" style="display:none" onchange="doUpload('c')">
+    <div class="upload-zone-wrap" onclick="document.getElementById('fu-c').click()" style="cursor:pointer">
+      <div class="uzw-info">
+        <strong>Atradius invoices CSV</strong>
+        <span id="cs-name">No file selected — click to choose</span>
+      </div>
+      <div class="upload-btn-div">
+        <div class="ub-icon">↑</div>
+        Choose &amp; upload
+      </div>
+    </div>
+    <div id="cs" style="font-size:11px;color:var(--text2);margin-top:4px"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Loaded collections <span id="crc" style="font-weight:400;color:var(--text3)">— 0 rows</span></div>
+    <div class="brow" style="margin-bottom:8px">
+      <input id="cf" type="text" placeholder="Filter by name or ID…" oninput="rC()" style="width:200px">
+      <button class="btn bgh bsm" onclick="clC()" style="margin-left:auto">Clear all</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Period</th><th>Retailer ID</th><th>Retailer name</th><th style="text-align:right">Amount</th><th>Ccy</th><th>Reference</th><th>Invoice</th><th></th></tr></thead>
+      <tbody id="ctb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-k">
+  <div class="pt">Checkouts</div>
+  <div class="ps">Upload open checkouts transferred to Atradius. Duplicate IDs are skipped automatically.</div>
+  <div class="card">
+    <div class="ct">Upload checkouts CSV</div>
+    <div class="nb"><strong>Columns:</strong> Retailer name · Checkout ID · Retailer ID · Amount · Due Date · Date Added · Note</div>
+    <input type="file" id="fu-k" accept=".csv" style="display:none" onchange="doUpload('k')">
+    <div class="upload-zone-wrap" onclick="document.getElementById('fu-k').click()" style="cursor:pointer">
+      <div class="uzw-info">
+        <strong>Checkouts to Atradius CSV</strong>
+        <span id="ks-name">No file selected — click to choose</span>
+      </div>
+      <div class="upload-btn-div">
+        <div class="ub-icon">↑</div>
+        Choose &amp; upload
+      </div>
+    </div>
+    <div id="ks" style="font-size:11px;color:var(--text2);margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Loaded checkouts <span id="krc" style="font-weight:400;color:var(--text3)">— 0 rows</span></div>
+    <div class="brow" style="margin-bottom:8px">
+      <input id="kf" type="text" placeholder="Filter by name or ID…" oninput="rK()" style="width:200px">
+      <button class="btn bgh bsm" onclick="clK()" style="margin-left:auto">Clear all</button>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Retailer name</th><th>Checkout ID</th><th>Retailer ID</th><th style="text-align:right">Amount</th><th>Due date</th><th>Date added</th><th></th></tr></thead>
+      <tbody id="ktb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-r">
+  <div class="pt">Run Reconciliation</div>
+  <div class="ps">Select the period, set the threshold, and run.</div>
+  <div class="card">
+    <div class="ct">Period selection</div>
+    <div class="brow" style="margin-bottom:14px">
+      <select id="period-select" class="period-select" onchange="onPeriodChange()">
+        <option value="ALL">All periods</option>
+      </select>
+      <span style="font-size:11px;color:var(--text2)">Select a specific month or all periods</span>
+    </div>
+    <div class="brow">
+      <label style="margin-bottom:0">Match threshold</label>
+      <input type="number" id="thr" value="80" min="1" max="100" style="width:60px">
+      <span style="font-size:11px;color:var(--text2)">% — checkout marked paid when collected ≥ this %</span>
+      <button class="btn bp" onclick="runRecon()" style="margin-left:auto">Run reconciliation →</button>
+    </div>
+    <div id="re" style="font-size:11px;color:var(--red);margin-top:6px"></div>
+  </div>
+  <div id="rss" style="display:none">
+    <div class="metrics" id="mb"></div>
+    <div class="card">
+      <div class="fbar">
+        <label>Status:</label>
+        <select id="fs" onchange="rR()" style="width:150px">
+          <option value="ALL">All statuses</option>
+          <option value="paid">Paid / reconciled</option>
+          <option value="partial">Partial</option>
+          <option value="open">Open</option>
+        </select>
+        <label>Retailer:</label>
+        <input id="fr" type="text" placeholder="name or ID…" oninput="rR()" style="width:150px">
+        <button class="btn bsm" onclick="exCSV('all')" style="margin-left:auto">Export CSV</button>
+        <div class="export-wrap">
+          <button class="btn bsm" onclick="toggleExportMenu()" id="export-dd-btn">Export ▾</button>
+          <div class="export-menu" id="export-menu">
+            <button onclick="exCSV('all');closeExportMenu()">Full reconciliation report</button>
+            <button onclick="exCSV('paid');closeExportMenu()">Paid / reconciled only</button>
+            <button onclick="exCSV('partial');closeExportMenu()">Partial only</button>
+            <button onclick="exCSV('open');closeExportMenu()">Open (no collection) only</button>
+          </div>
+        </div>
+        <button class="btn bsm blime" onclick="cpIDs()" id="cpb">Copy reconciled checkout IDs</button>
+      </div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th style="width:130px">Retailer</th><th style="width:70px">Retailer ID</th>
+          <th style="width:90px">Checkout ID</th><th style="width:75px">Due date</th>
+          <th style="width:50px">Ccy</th>
+          <th style="width:75px;text-align:right">Checkout</th>
+          <th style="width:75px;text-align:right">Collected</th>
+          <th style="width:55px;text-align:right">Cov.</th>
+          <th style="width:85px">Status</th><th>Period(s)</th>
+        </tr></thead>
+        <tbody id="rtb"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-t">
+  <div class="pt">Sync Reconciled Checkouts</div>
+  <div class="ps">Follow these steps after running reconciliation to update the tracker sheet.</div>
+
+  <div class="step-banner">
+    <div class="step-num">1</div>
+    <div class="step-text"><h3>Copy reconciled checkout IDs</h3><p>Click the button to copy all reconciled checkout IDs to your clipboard.</p></div>
+    <button class="btn bp bsm" onclick="cpIDs()" id="cpb2" style="flex-shrink:0">Copy IDs</button>
+  </div>
+
+  <div class="step-banner">
+    <div class="step-num">2</div>
+    <div class="step-text"><h3>Open the tracker sheet</h3><p>Click to open the reconciled checkouts Google Sheet in a new tab.</p></div>
+    <a href="https://docs.google.com/spreadsheets/d/15zN_Yxn5TjiA9WUdEJHE6lmjtIbsl4Hlk1PLAEhL1lI/edit?gid=994640055#gid=994640055" target="_blank" class="btn bp bsm" style="flex-shrink:0;text-decoration:none">Open tracker ↗</a>
+  </div>
+
+  <div class="step-banner">
+    <div class="step-num">3</div>
+    <div class="step-text"><h3>Paste the IDs</h3><p>Click the first empty cell in the Checkout ID column and press Ctrl+V (Cmd+V on Mac). Each ID pastes into its own row.</p></div>
+  </div>
+
+  <div class="step-banner">
+    <div class="step-num">4</div>
+    <div class="step-text">
+      <h3>Add Stripe Charge ID &amp; Payment Intent ID</h3>
+      <p>For each reconciled checkout, add the Stripe Charge ID and Payment Intent ID from the remittance in the tracker sheet.</p>
+    </div>
+    <a href="https://dashboard.stripe.com/acct_1EeeU3LNz5WXToSH/customers/cus_PDVykGJi70YiVd" target="_blank" class="btn bp bsm" style="flex-shrink:0;text-decoration:none">Open Stripe ↗</a>
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="ct">IDs preview</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Run reconciliation first, then copy the IDs using the button in Step 1 above.</p>
+    <div id="cpstat" style="font-size:11px;color:var(--text2);margin-bottom:8px"></div>
+    <div id="preview-ids" style="font-family:var(--mono);font-size:10px;color:var(--text2);max-height:120px;overflow-y:auto;background:var(--surface2);padding:10px;border-radius:var(--radius);display:none;line-height:1.8"></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-g">
+  <div class="pt">Gaps &amp; Flags</div>
+  <div class="ps">Collections needing attention and checkouts with no payment received.</div>
+  <div class="card" style="border-color:#f0c090">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="ct" style="color:var(--orange);margin-bottom:0">Collections with no retailer reference — action required</div>
+      <button class="btn bsm" onclick="exNoRef()">Export CSV</button>
+    </div>
+    <div class="wb">These lines have no Retailer ID or name. <strong>Contact Atradius</strong> for the missing retailer details.</div>
+    <div class="tw"><table>
+      <thead><tr><th>Period</th><th>Invoice</th><th style="text-align:right">Amount</th><th>Ccy</th><th>Reference</th></tr></thead>
+      <tbody id="nrtb"></tbody>
+    </table></div>
+  </div>
+  <div class="twocol">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="ct" style="color:var(--amber);margin-bottom:0">Collections — no matching checkout</div>
+        <button class="btn bsm" onclick="exUnmatched()">Export CSV</button>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Retailer ID not found in checkouts. Usually an ID mismatch.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Retailer</th><th>ID</th><th>Ccy</th><th style="text-align:right">Amount</th><th>Period</th></tr></thead>
+        <tbody id="gcb"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="ct" style="margin-bottom:0">Checkouts — no collection received</div>
+        <button class="btn bsm" onclick="exOpenChk()">Export CSV</button>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Open checkouts with no Atradius payment in the selected period.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Retailer</th><th>ID</th><th>Checkout ID</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody id="gkb"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-h">
+  <div class="pt">Retailer Summary</div>
+  <div class="ps">Cumulative collection progress per retailer across all loaded periods.</div>
+  <div class="brow" style="margin-bottom:14px">
+    <button class="btn bsm" onclick="exHist()">Export retailer summary CSV</button>
+  </div>
+  <div class="card"><div class="tw"><table>
+    <thead><tr><th>Retailer</th><th>ID</th><th>Ccy</th><th style="text-align:right">Collected</th><th style="text-align:right">Due</th><th style="min-width:110px">Recovery</th><th style="text-align:center">Total</th><th style="text-align:center">Paid</th><th style="text-align:center">Partial</th><th style="text-align:center">Open</th></tr></thead>
+    <tbody id="htb"></tbody>
+  </table></div></div>
+</div>
+
+<div class="panel" id="panel-s">
+  <div class="pt">Data Sources</div>
+  <div class="ps">Reference links to source files used each month.</div>
+  <div class="card">
+    <div class="ct">Add source link</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
+      <div><label>URL</label><input id="su" type="text" placeholder="https://…"></div>
+      <div><label>Description</label><input id="sd" type="text" placeholder="e.g. Atradius collections sheet"></div>
+      <div style="padding-bottom:1px"><label>&nbsp;</label><button class="btn bp" onclick="aS()">Add</button></div>
+    </div>
+    <div id="se" style="font-size:11px;color:var(--red);margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Saved sources <span id="src-rc" style="font-weight:400;color:var(--text3)"></span></div>
+    <div class="tw"><table>
+      <thead><tr><th style="width:45%">Link</th><th style="width:45%">Description</th><th></th></tr></thead>
+      <tbody id="stb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-u">
+  <div class="pt">User Guide</div>
+  <div class="ps">Monthly reconciliation workflow — step by step.</div>
+  <div class="card">
+    <div class="ct">Monthly workflow</div>
+    <div class="gs"><div class="gn">1</div><div class="gb"><h4>Upload collections</h4><p>Go to Collections. Select the Atradius invoices CSV and click Upload collections. Rows are appended — safe to upload multiple months.</p></div></div>
+    <div class="gs"><div class="gn">2</div><div class="gb"><h4>Upload checkouts</h4><p>Go to Checkouts. Select the Checkouts to Atradius CSV and click Upload checkouts. Duplicate checkout IDs are automatically skipped.</p></div></div>
+    <div class="gs"><div class="gn">3</div><div class="gb"><h4>Run reconciliation</h4><p>Go to Run &amp; Results. Select a month or All periods. Keep threshold at 80%. Click Run reconciliation.</p></div></div>
+    <div class="gs"><div class="gn">4</div><div class="gb"><h4>Copy IDs &amp; update tracker</h4><p>Click Copy reconciled checkout IDs. Then go to Update Tracker, open the Google Sheet, and paste (Ctrl+V) into the Checkout ID column.</p></div></div>
+    <div class="gs"><div class="gn">5</div><div class="gb"><h4>Review Gaps &amp; Flags</h4><p>Check the orange panel — contact Atradius for no-reference collections. Review unmatched collections and open checkouts.</p></div></div>
+    <div class="gs"><div class="gn">6</div><div class="gb"><h4>Save your data</h4><p>Click Save to browser in the header. Use Restore saved next session.</p></div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Status definitions</div>
+    <div class="sl">
+      <div class="si" style="background:#D8F5E5"><strong style="color:var(--green)">Paid in full</strong><span style="color:var(--green)">100% collected.</span></div>
+      <div class="si" style="background:#D8EEF5"><strong style="color:#1B5A8A">Paid ≥ thr.</strong><span style="color:#1B5A8A">At or above threshold.</span></div>
+      <div class="si" style="background:var(--amber-bg)"><strong style="color:var(--amber)">Partial</strong><span style="color:var(--amber)">Below threshold — open.</span></div>
+      <div class="si" style="background:var(--surface2)"><strong style="color:var(--text2)">Open</strong><span style="color:var(--text2)">No collection received.</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">CSV file formats</div>
+    <table><thead><tr><th>File</th><th>Columns (in order)</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Atradius collections</td><td class="mono">Remittance Date · Retailer ID · Invoice number · Recovered amount · Currency · Reference · Retailer name</td></tr>
+      <tr><td style="font-weight:600">Checkouts to Atradius</td><td class="mono">Retailer name · Checkout ID · Retailer ID · Amount · Due Date · Date Added · Note</td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+var CD=[],KD=[],RR=[],XC=[],NR=[],selPeriods=new Set(['ALL']);
+var srcData=[
+  {url:'https://drive.google.com/drive/u/0/folders/1ZQrN2P21qVdgHeINP1-H1gDNsABhtZLo',desc:'Google Drive — source CSV files'},
+  {url:'https://docs.google.com/spreadsheets/d/15zN_Yxn5TjiA9WUdEJHE6lmjtIbsl4Hlk1PLAEhL1lI/edit?gid=994640055#gid=994640055',desc:'Reconciled checkouts tracker — paste IDs here'}
+];
+
+function gn(n){
+  document.querySelectorAll('.ni').forEach(function(e){e.classList.remove('on');});
+  document.querySelectorAll('.panel').forEach(function(e){e.classList.remove('on');});
+  document.getElementById('ni-'+n).classList.add('on');
+  document.getElementById('panel-'+n).classList.add('on');
+}
+
+function parseCSV(txt){
+  var lines=txt.replace(/\r/g,'').split('\n'),result=[];
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];if(!line.trim())continue;
+    var cols=[],cur='',inQ=false;
+    for(var j=0;j<line.length;j++){
+      var c=line[j];
+      if(c==='"'){inQ=!inQ;continue;}
+      if(c===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=c;
+    }
+    cols.push(cur.trim());result.push(cols);
+  }
+  return result;
+}
+
+function pa(v){
+  if(!v&&v!==0)return 0;
+  var n=parseFloat(String(v).replace(/[€£$\s]/g,'').replace(/,(?=\d{3})/g,'').replace(',','.'));
+  return isNaN(n)?0:n;
+}
+
+function isHdr(r){return /retailer|checkout|amount|date|remit/i.test(r.join(' '));}
+
+function fmt(n){return parseFloat(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function doUpload(type){
+  var el=document.getElementById(type==='c'?'fu-c':'fu-k');
+  var st=document.getElementById(type==='c'?'cs':'ks');
+  var nm=document.getElementById(type==='c'?'cs-name':'ks-name');
+  if(!el||!el.files||!el.files[0]){return;}
+  var file=el.files[0];
+  if(nm)nm.textContent='Reading: '+file.name+'…';
+  st.textContent='Reading…';
+  var reader=new FileReader();
+  reader.onerror=function(){st.textContent='Error reading file.';alert('Could not read the file.');};
+  reader.onload=function(evt){
+    var rows=parseCSV(evt.target.result);
+    if(!rows||rows.length<2){st.textContent='File appears empty.';return;}
+    var data=isHdr(rows[0])?rows.slice(1):rows;
+    var added=0;
+    if(type==='c'){
+      for(var i=0;i<data.length;i++){
+        var r=data[i];if(r.length<4)continue;
+        var amt=pa(r[3]),rid=String(r[1]||'').trim().replace(/,/g,''),rname=String(r[6]||'').trim().toUpperCase();
+        if(!rid&&!rname){NR.push({period:String(r[0]||'').trim(),invoice:String(r[2]||'').trim(),amount:amt,currency:String(r[4]||'EUR').trim().toUpperCase(),ref:String(r[5]||'').trim()});continue;}
+        if(amt===0)continue;
+        CD.push({period:String(r[0]||'').trim(),retailerId:rid,invoice:String(r[2]||'').trim(),amount:amt,currency:String(r[4]||'EUR').trim().toUpperCase()||'EUR',ref:String(r[5]||'').trim(),name:rname});
+        added++;
+      }
+      st.textContent='✓ '+added+' rows loaded'+(NR.length?' · ⚠ '+NR.length+' no-reference rows':'');
+      var nm=document.getElementById('cs-name');if(nm)nm.textContent='✓ '+file.name+' — '+added+' rows loaded';
+      rC();upd();popP();
+    }else{
+      var seen={};
+      for(var i=0;i<KD.length;i++)seen[KD[i].checkoutId+'|'+KD[i].retailerId]=true;
+      for(var i=0;i<data.length;i++){
+        var r=data[i];if(r.length<4)continue;
+        var amt=pa(r[3]),cid=String(r[1]||'').trim().replace(/,/g,''),rid=String(r[2]||'').trim().replace(/,/g,''),nm=String(r[0]||'').trim();
+        if(!amt||!cid||!rid||nm==='#N/A')continue;
+        var k=cid+'|'+rid;if(seen[k])continue;seen[k]=true;
+        KD.push({name:nm,checkoutId:cid,retailerId:rid,amount:amt,dueDate:String(r[4]||'').trim(),date:String(r[5]||'').trim()});
+        added++;
+      }
+      st.textContent='✓ '+added+' new rows loaded';
+      var nm=document.getElementById('ks-name');if(nm)nm.textContent='✓ '+file.name+' — '+added+' rows loaded';
+      rK();upd();
+    }
+  };
+  reader.readAsText(file);
+}
+
+function rC(){
+  var f=(document.getElementById('cf').value||'').toUpperCase();
+  var rows=f?CD.filter(function(r){return r.name.indexOf(f)>-1||r.retailerId.indexOf(f)>-1;}):CD;
+  document.getElementById('crc').textContent='— '+CD.length+' rows';
+  var h='';
+  if(!rows.length)h='<tr><td colspan="8" class="empty">No collections loaded. Upload a CSV above.</td></tr>';
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i],idx=CD.indexOf(r);
+    h+='<tr><td class="mono">'+r.period+'</td><td class="mono">'+r.retailerId+'</td><td>'+r.name+'</td><td style="text-align:right" class="mono">'+fmt(r.amount)+'</td><td class="mono">'+(r.currency||'EUR')+'</td><td class="mono">'+(r.ref||'—')+'</td><td class="mono">'+(r.invoice||'—')+'</td><td><button class="btn bsm bdn" onclick="CD.splice('+idx+',1);rC();upd()">×</button></td></tr>';
+  }
+  document.getElementById('ctb').innerHTML=h;
+}
+
+function rK(){
+  var f=(document.getElementById('kf').value||'').toUpperCase();
+  var rows=f?KD.filter(function(r){return (r.name||'').toUpperCase().indexOf(f)>-1||r.retailerId.indexOf(f)>-1;}):KD;
+  document.getElementById('krc').textContent='— '+KD.length+' rows';
+  var h='';
+  if(!rows.length)h='<tr><td colspan="7" class="empty">No checkouts loaded. Upload a CSV above.</td></tr>';
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i],idx=KD.indexOf(r);
+    h+='<tr><td>'+r.name+'</td><td class="mono">'+r.checkoutId+'</td><td class="mono">'+r.retailerId+'</td><td style="text-align:right" class="mono">'+fmt(r.amount)+'</td><td class="mono">'+(r.dueDate||'—')+'</td><td class="mono">'+(r.date||'—')+'</td><td><button class="btn bsm bdn" onclick="KD.splice('+idx+',1);rK();upd()">×</button></td></tr>';
+  }
+  document.getElementById('ktb').innerHTML=h;
+}
+
+function clC(){if(confirm('Clear all collection data?')){CD=[];NR=[];rC();upd();popP();}}
+function clK(){if(confirm('Clear all checkout data?')){KD=[];rK();upd();}}
+
+function upd(){
+  document.getElementById('nc-c').textContent=CD.length;
+  document.getElementById('nc-k').textContent=KD.length;
+  document.getElementById('hm').textContent=CD.length+' coll rows · '+KD.length+' checkout rows';
+}
+
+function popP(){
+  var p=[],seen={};
+  for(var i=0;i<CD.length;i++){if(CD[i].period&&!seen[CD[i].period]){p.push(CD[i].period);seen[CD[i].period]=true;}}
+  var months={january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
+  p.sort(function(a,b){
+    var pa=a.toLowerCase().split(' '),pb=b.toLowerCase().split(' ');
+    var ya=parseInt(pa[1]||0),yb=parseInt(pb[1]||0);
+    if(ya!==yb)return ya-yb;
+    return (months[pa[0]]||0)-(months[pb[0]]||0);
+  });
+  var sel=document.getElementById('period-select');
+  var cur=sel.value;
+  sel.innerHTML='<option value="ALL">All periods</option>';
+  for(var i=0;i<p.length;i++){
+    var opt=document.createElement('option');
+    opt.value=p[i];opt.textContent=p[i];
+    sel.appendChild(opt);
+  }
+  if(cur&&cur!=='ALL'){
+    for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===cur){sel.value=cur;break;}}
+  }
+  selPeriods=new Set([sel.value]);
+}
+
+function onPeriodChange(){
+  var v=document.getElementById('period-select').value;
+  selPeriods=new Set([v]);
+}
+
+function tP(p){selPeriods=new Set([p]);}
+
+function runRecon(){
+  var err=document.getElementById('re');err.textContent='';
+  if(!CD.length){err.textContent='No collection data loaded.';return;}
+  if(!KD.length){err.textContent='No checkout data loaded.';return;}
+  var thr=parseFloat(document.getElementById('thr').value)/100;
+  var pv=document.getElementById('period-select').value;
+  var useAll=pv==='ALL';
+  var wc=[];for(var i=0;i<CD.length;i++){if(useAll||CD[i].period===pv)wc.push(CD[i]);}
+  var cB={},pB={},nB={},curB={};
+  for(var i=0;i<wc.length;i++){
+    var c=wc[i];
+    cB[c.retailerId]=(cB[c.retailerId]||0)+c.amount;
+    if(!pB[c.retailerId])pB[c.retailerId]=[];
+    if(pB[c.retailerId].indexOf(c.period)<0)pB[c.retailerId].push(c.period);
+    if(!nB[c.retailerId])nB[c.retailerId]=c.name;
+    if(!curB[c.retailerId])curB[c.retailerId]=(c.currency||'EUR').trim().toUpperCase()||'EUR';
+  }
+  var kB={};
+  for(var i=0;i<KD.length;i++){
+    var k=KD[i];if(!kB[k.retailerId])kB[k.retailerId]=[];
+    var copy={};for(var key in k)copy[key]=k[key];
+    copy.collected=0;copy.status='open';copy.periods=[];
+    kB[k.retailerId].push(copy);
+  }
+  RR=[];XC=[];var mid={};
+  for(var rid in cB){
+    var tot=cB[rid],chks=kB[rid];
+    if(!chks){XC.push({name:nB[rid]||rid,retailerId:rid,amount:tot,currency:curB[rid]||'EUR',periods:pB[rid]||[]});continue;}
+    mid[rid]=true;
+    chks.sort(function(a,b){
+      function pd(d){
+        if(!d)return new Date(0);
+        var p=d.split('/');
+        if(p.length===3){if(p[2].length===4)return new Date(p[2]+'-'+('0'+p[1]).slice(-2)+'-'+('0'+p[0]).slice(-2));return new Date(p[0]+'-'+('0'+p[1]).slice(-2)+'-'+('0'+p[2]).slice(-2));}
+        return new Date(d);
+      }
+      return pd(a.dueDate||a.date)-pd(b.dueDate||b.date);
+    });
+    var rem=tot;
+    for(var i=0;i<chks.length;i++){
+      var chk=chks[i],cov=rem/chk.amount;
+      chk.currency=curB[rid]||'EUR';chk.periods=pB[rid]||[];
+      if(cov>=thr){chk.collected=Math.min(rem,chk.amount);chk.status=cov>=1?'paid-full':'paid-thr';rem-=chk.collected;rem=Math.max(0,rem);}
+      else if(rem>0.005){chk.collected=rem;chk.status='partial';rem=0;}
+      RR.push(chk);
+    }
+    if(rem>0.01)XC.push({name:nB[rid]||rid,retailerId:rid,amount:parseFloat(rem.toFixed(2)),currency:curB[rid]||'EUR',periods:pB[rid]||[]});
+  }
+  for(var rid in kB){if(!mid[rid])for(var i=0;i<kB[rid].length;i++)RR.push(kB[rid][i]);}
+  document.getElementById('rss').style.display='';
+  rMet();rR();rGaps();rHist();
+}
+
+function sb(s){
+  if(s==='paid-full')return '<span class="badge bg">Paid in full</span>';
+  if(s==='paid-thr')return '<span class="badge bb">Paid ≥ thr.</span>';
+  if(s==='partial')return '<span class="badge ba">Partial</span>';
+  return '<span class="badge bgr">Open</span>';
+}
+
+function rMet(){
+  var tot=RR.length,paid=0,part=0,open=0,due=0,coll=0;
+  for(var i=0;i<RR.length;i++){var r=RR[i];if(r.status==='paid-full'||r.status==='paid-thr')paid++;else if(r.status==='partial')part++;else open++;due+=r.amount;coll+=(r.collected||0);}
+  var pct=due>0?Math.round(coll/due*100):0,nr=NR.length;
+  var h='<div class="met"><div class="ml">Total checkouts</div><div class="mv">'+tot+'</div></div>';
+  h+='<div class="met la"><div class="ml">Paid / reconciled</div><div class="mv">'+paid+'</div><div class="ms">'+Math.round(paid/tot*100||0)+'%</div></div>';
+  h+='<div class="met"><div class="ml">Partial</div><div class="mv" style="color:var(--amber)">'+part+'</div></div>';
+  h+='<div class="met"><div class="ml">Open</div><div class="mv">'+open+'</div></div>';
+  h+='<div class="met"><div class="ml">Recovery</div><div class="mv">'+pct+'%</div><div class="ms">'+fmt(coll)+' / '+fmt(due)+'</div></div>';
+  if(nr)h+='<div class="met fa"><div class="ml">No-ref flags</div><div class="mv">'+nr+'</div><div class="ms">query Atradius</div></div>';
+  document.getElementById('mb').innerHTML=h;
+}
+
+function rR(){
+  var sf=document.getElementById('fs').value,rf=(document.getElementById('fr').value||'').toUpperCase();
+  var rows=RR.filter(function(r){
+    if(sf==='paid')return r.status==='paid-full'||r.status==='paid-thr';
+    if(sf!=='ALL')return r.status===sf;
+    return true;
+  });
+  if(rf)rows=rows.filter(function(r){return (r.name||'').toUpperCase().indexOf(rf)>-1||(r.retailerId||'').indexOf(rf)>-1;});
+  var byR={};
+  for(var i=0;i<rows.length;i++){var r=rows[i];if(!byR[r.retailerId])byR[r.retailerId]=[];byR[r.retailerId].push(r);}
+  var h='';
+  for(var rid in byR){
+    var rs=byR[rid],tc=0,td=0;
+    for(var i=0;i<rs.length;i++){tc+=(rs[i].collected||0);td+=rs[i].amount;}
+    var cur=rs[0].currency||'—';
+    h+='<tr class="trg"><td colspan="9">'+(rs[0].name||rid)+' — ID '+rid+' &nbsp;·&nbsp; '+fmt(tc)+' / '+fmt(td)+' '+cur+'</td></tr>';
+    for(var i=0;i<rs.length;i++){
+      var r=rs[i],p=r.amount>0?Math.round((r.collected||0)/r.amount*100):0;
+      h+='<tr><td>'+(r.name||'')+'</td><td class="mono">'+r.retailerId+'</td><td class="mono">'+r.checkoutId+'</td><td class="mono">'+(r.dueDate||'—')+'</td><td class="mono">'+(r.currency||'—')+'</td><td style="text-align:right" class="mono">'+fmt(r.amount)+'</td><td style="text-align:right" class="mono">'+(r.collected>0?fmt(r.collected):'—')+'</td><td style="text-align:right" class="mono">'+(r.amount>0?p+'%':'—')+'</td><td>'+sb(r.status)+'</td><td class="mono" style="font-size:10px">'+(r.periods||[]).join(', ')+'</td></tr>';
+    }
+  }
+  if(!h)h='<tr><td colspan="9" class="empty">No results match filters.</td></tr>';
+  document.getElementById('rtb').innerHTML=h;
+}
+
+function rGaps(){
+  var hn='';
+  if(!NR.length)hn='<tr><td colspan="5" class="empty">None — all rows have a Retailer ID or name.</td></tr>';
+  for(var i=0;i<NR.length;i++){var u=NR[i];hn+='<tr class="flr"><td class="mono">'+u.period+'</td><td class="mono">'+(u.invoice||'—')+'</td><td style="text-align:right" class="mono">'+fmt(u.amount)+'</td><td class="mono">'+(u.currency||'—')+'</td><td class="mono">'+(u.ref||'—')+'</td></tr>';}
+  document.getElementById('nrtb').innerHTML=hn;
+  var hc='';
+  if(!XC.length)hc='<tr><td colspan="5" class="empty">None — all collections matched.</td></tr>';
+  for(var i=0;i<XC.length;i++){var u=XC[i];hc+='<tr><td>'+u.name+'</td><td class="mono">'+u.retailerId+'</td><td class="mono">'+(u.currency||'—')+'</td><td style="text-align:right" class="mono">'+fmt(u.amount)+'</td><td class="mono" style="font-size:10px">'+u.periods.join(', ')+'</td></tr>';}
+  document.getElementById('gcb').innerHTML=hc;
+  var ok=RR.filter(function(r){return r.status==='open';});
+  var hk='';
+  if(!ok.length)hk='<tr><td colspan="4" class="empty">None — all checkouts have collection.</td></tr>';
+  for(var i=0;i<ok.length;i++){var u=ok[i];hk+='<tr><td>'+(u.name||'')+'</td><td class="mono">'+u.retailerId+'</td><td class="mono">'+u.checkoutId+'</td><td style="text-align:right" class="mono">'+fmt(u.amount)+'</td></tr>';}
+  document.getElementById('gkb').innerHTML=hk;
+}
+
+function rHist(){
+  var byR={};
+  for(var i=0;i<RR.length;i++){
+    var r=RR[i];
+    if(!byR[r.retailerId])byR[r.retailerId]={name:r.name||r.retailerId,id:r.retailerId,coll:0,due:0,tot:0,paid:0,part:0,open:0,currency:r.currency||'—'};
+    var b=byR[r.retailerId];b.due+=r.amount;b.coll+=(r.collected||0);b.tot++;
+    if(!b.currency||b.currency==='—')b.currency=r.currency||'—';
+    if(r.status==='paid-full'||r.status==='paid-thr')b.paid++;else if(r.status==='partial')b.part++;else b.open++;
+  }
+  var rows=[];for(var rid in byR)rows.push(byR[rid]);
+  rows.sort(function(a,b){return b.coll-a.coll;});
+  var h='';
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i],p=r.due>0?Math.round(r.coll/r.due*100):0;
+    var fc=p>=80?'var(--green)':p>=40?'var(--amber)':'var(--red)';
+    h+='<tr><td>'+r.name+'</td><td class="mono">'+r.id+'</td><td class="mono">'+r.currency+'</td><td style="text-align:right" class="mono">'+fmt(r.coll)+'</td><td style="text-align:right" class="mono">'+fmt(r.due)+'</td><td><div class="pwrap"><span class="mono" style="min-width:26px">'+p+'%</span><div class="pbg"><div class="pbf" style="width:'+Math.min(p,100)+'%;background:'+fc+'"></div></div></div></td><td style="text-align:center">'+r.tot+'</td><td style="text-align:center;color:var(--green);font-weight:600">'+r.paid+'</td><td style="text-align:center;color:var(--amber);font-weight:600">'+r.part+'</td><td style="text-align:center">'+r.open+'</td></tr>';
+  }
+  if(!h)h='<tr><td colspan="10" class="empty">Run reconciliation first.</td></tr>';
+  document.getElementById('htb').innerHTML=h;
+}
+
+
+function toggleExportMenu(){var m=document.getElementById('export-menu');m.classList.toggle('open');}
+function closeExportMenu(){var m=document.getElementById('export-menu');if(m)m.classList.remove('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.export-wrap'))closeExportMenu();});
+
+function exCSV(mode){
+  if(!RR.length){alert('Run reconciliation first.');return;}
+  var data=RR;
+  if(mode==='paid')data=RR.filter(function(r){return r.status==='paid-full'||r.status==='paid-thr';});
+  else if(mode==='partial')data=RR.filter(function(r){return r.status==='partial';});
+  else if(mode==='open')data=RR.filter(function(r){return r.status==='open';});
+  if(!data.length){alert('No rows match this filter.');return;}
+  var rows=[['Retailer','Retailer ID','Checkout ID','Due Date','Date Added','Currency','Amount Due','Collected','Coverage %','Status','Periods']];
+  for(var i=0;i<data.length;i++){var r=data[i],p=r.amount>0?((r.collected||0)/r.amount*100).toFixed(1):'0';rows.push([r.name||'',r.retailerId,r.checkoutId,r.dueDate||'',r.date||'',r.currency||'',r.amount.toFixed(2),(r.collected||0).toFixed(2),p,r.status,(r.periods||[]).join('; ')]);}
+  var suffix=mode==='all'?'full':mode;
+  dlCSV(rows,'atradius_recon_'+suffix+'_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function exNoRef(){
+  if(!NR.length){alert('No no-reference rows. Run reconciliation first.');return;}
+  var rows=[['Period','Invoice','Amount','Currency','Reference']];
+  for(var i=0;i<NR.length;i++){var u=NR[i];rows.push([u.period,u.invoice||'',(u.amount||0).toFixed(2),u.currency||'',u.ref||'']);}
+  dlCSV(rows,'atradius_no_reference_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function exUnmatched(){
+  if(!XC.length){alert('No unmatched collections. Run reconciliation first.');return;}
+  var rows=[['Retailer','Retailer ID','Currency','Amount','Periods']];
+  for(var i=0;i<XC.length;i++){var u=XC[i];rows.push([u.name,u.retailerId,u.currency||'',(u.amount||0).toFixed(2),u.periods.join('; ')]);}
+  dlCSV(rows,'atradius_unmatched_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function exOpenChk(){
+  var ok=RR.filter(function(r){return r.status==='open';});
+  if(!ok.length){alert('No open checkouts. Run reconciliation first.');return;}
+  var rows=[['Retailer','Retailer ID','Checkout ID','Due Date','Amount','Currency']];
+  for(var i=0;i<ok.length;i++){var u=ok[i];rows.push([u.name||'',u.retailerId,u.checkoutId,u.dueDate||'',(u.amount||0).toFixed(2),u.currency||'']);}
+  dlCSV(rows,'atradius_open_checkouts_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function exHist(){
+  if(!RR.length){alert('Run reconciliation first.');return;}
+  var byR={};
+  for(var i=0;i<RR.length;i++){var r=RR[i];if(!byR[r.retailerId])byR[r.retailerId]={name:r.name||r.retailerId,id:r.retailerId,coll:0,due:0,tot:0,paid:0,part:0,open:0,currency:r.currency||'—'};var b=byR[r.retailerId];b.due+=r.amount;b.coll+=(r.collected||0);b.tot++;if(!b.currency||b.currency==='—')b.currency=r.currency||'—';if(r.status==='paid-full'||r.status==='paid-thr')b.paid++;else if(r.status==='partial')b.part++;else b.open++;}
+  var rows=[['Retailer','Retailer ID','Currency','Collected','Total Due','Recovery %','Total Checkouts','Paid','Partial','Open']];
+  for(var rid in byR){var r=byR[rid],p=r.due>0?Math.round(r.coll/r.due*100):0;rows.push([r.name,r.id,r.currency,r.coll.toFixed(2),r.due.toFixed(2),p+'%',r.tot,r.paid,r.part,r.open]);}
+  rows.sort(function(a,b){return parseFloat(b[3])-parseFloat(a[3]);});
+  dlCSV(rows,'atradius_retailer_summary_'+new Date().toISOString().slice(0,10)+'.csv');
+}
+
+function dlCSV(rows,filename){
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=filename;a.click();
+}
+
+function cpIDs(){
+  if(!RR.length){alert('Run reconciliation first.');return;}
+  var ids=RR.filter(function(r){return r.status==='paid-full'||r.status==='paid-thr';}).map(function(r){return r.checkoutId;});
+  if(!ids.length){alert('No reconciled checkouts found.');return;}
+  var text=ids.join('\n');
+  function done(){
+    var b1=document.getElementById('cpb');
+    if(b1){var o=b1.textContent;b1.textContent='✓ '+ids.length+' IDs copied!';b1.style.background='var(--lime)';b1.style.color='var(--teal-deeper)';setTimeout(function(){b1.textContent=o;b1.style.background='';b1.style.color='';},2500);}
+    var b2=document.getElementById('cpb2');
+    if(b2){var o=b2.textContent;b2.textContent='✓ '+ids.length+' IDs copied!';b2.style.background='var(--lime)';b2.style.color='var(--teal-deeper)';setTimeout(function(){b2.textContent=o;b2.style.background='';b2.style.color='';},2500);}
+    var st=document.getElementById('cpstat');if(st)st.textContent='✓ '+ids.length+' IDs ready to paste';
+    var pv=document.getElementById('preview-ids');if(pv){pv.style.display='block';pv.textContent=ids.slice(0,20).join('\n')+(ids.length>20?'\n… and '+(ids.length-20)+' more':'');}
+  }
+  function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;top:0;left:0;opacity:0;width:1px;height:1px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);done();}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done).catch(fb);else fb();
+}
+
+function aS(){
+  var url=document.getElementById('su').value.trim(),desc=document.getElementById('sd').value.trim(),err=document.getElementById('se');
+  if(!url||!desc){err.textContent='URL and description required.';return;}
+  err.textContent='';srcData.push({url:url,desc:desc});
+  document.getElementById('su').value='';document.getElementById('sd').value='';rSrc();
+}
+
+function rSrc(){
+  document.getElementById('src-rc').textContent='— '+srcData.length+' links';
+  document.getElementById('nc-s').textContent=srcData.length;
+  var h='';
+  if(!srcData.length)h='<tr><td colspan="3" class="empty">No sources saved.</td></tr>';
+  for(var i=0;i<srcData.length;i++){var s=srcData[i],d=s.url.length>55?s.url.slice(0,52)+'…':s.url;h+='<tr><td><a href="'+s.url+'" target="_blank" style="color:var(--teal);font-size:11px;font-family:var(--mono);text-decoration:none;word-break:break-all">'+d+'</a></td><td style="font-size:11px">'+s.desc+'</td><td><button class="btn bsm bdn" onclick="srcData.splice('+i+',1);rSrc()">×</button></td></tr>';}
+  document.getElementById('stb').innerHTML=h;
+}
+rSrc();
+
+function sv(){try{localStorage.setItem('aks_recon_v2',JSON.stringify({CD:CD,KD:KD,srcData:srcData,NR:NR,savedAt:new Date().toISOString()}));var d=new Date();document.getElementById('ss').textContent='Saved '+d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){alert('Could not save: '+e.message);}}
+
+function rs(){try{var raw=localStorage.getItem('aks_recon_v2');if(!raw){alert('No saved data found.');return;}var pl=JSON.parse(raw);if(!confirm('Load saved data from '+new Date(pl.savedAt).toLocaleString()+'?'))return;CD=pl.CD||[];KD=pl.KD||[];NR=pl.NR||[];if(pl.srcData)srcData=pl.srcData;rC();rK();rSrc();upd();popP();document.getElementById('ss').textContent='Restored from '+new Date(pl.savedAt).toLocaleDateString();}catch(e){alert('Could not restore.');}}
+
+function clrS(){if(!confirm('Delete all saved browser data?'))return;localStorage.removeItem('aks_recon_v2');document.getElementById('ss').textContent='Cleared';setTimeout(function(){document.getElementById('ss').textContent='';},3000);}
+
+(function(){try{var raw=localStorage.getItem('aks_recon_v2');if(raw){var pl=JSON.parse(raw);document.getElementById('ss').textContent='Saved data available — '+new Date(pl.savedAt).toLocaleDateString();}}catch(e){}})();
+
+
+
+</script>
+</div><!-- end tool-recon -->
+
+<!-- ESCALATION TOOL -->
+<div id="tool-esc" style="display:none">
+<style>
+#tool-esc{font-family:'Poppins',sans-serif;background:#f0f2f5;color:#111827;min-height:calc(100vh - 88px)}
+#tool-esc .ec{max-width:940px;margin:0 auto;padding:24px 16px}
+#tool-esc .eprog{display:flex;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 20px;margin-bottom:20px}
+#tool-esc .eps{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+#tool-esc .epl{flex:1;height:2px;background:#e5e7eb;margin:0 6px;border-radius:2px}
+#tool-esc .epl.done{background:#1a56db}
+#tool-esc .epn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid #e5e7eb;background:#f3f4f6;color:#6b7280}
+#tool-esc .eps.active .epn,#tool-esc .eps.done .epn{background:#1a56db;border-color:#1a56db;color:#fff}
+#tool-esc .eplbl{font-size:11px;font-weight:600;color:#6b7280;white-space:nowrap}
+#tool-esc .eps.active .eplbl,#tool-esc .eps.done .eplbl{color:#1a56db}
+#tool-esc .ecard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px}
+#tool-esc .ect{font-size:15px;font-weight:700;margin-bottom:4px}
+#tool-esc .ecd{font-size:13px;color:#6b7280;margin-bottom:12px}
+#tool-esc .eugrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+#tool-esc .euz{border:2px dashed #e5e7eb;border-radius:8px;padding:16px 12px;text-align:center;cursor:pointer;background:#f3f4f6;transition:all .18s}
+#tool-esc .euz:hover{border-color:#1a56db;background:#ebf3fe}
+#tool-esc .euz.done{border-color:#057a55;border-style:solid;background:#e3fcef}
+#tool-esc .euico{font-size:22px;margin-bottom:5px}
+#tool-esc .eut{font-size:12px;font-weight:700}
+#tool-esc .euh{font-size:10px;color:#6b7280;margin-top:2px}
+#tool-esc .eufn{font-size:10px;color:#057a55;font-weight:600;margin-top:4px;word-break:break-all}
+#tool-esc .estats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+#tool-esc .estat{background:#f3f4f6;border-radius:8px;padding:12px;text-align:center}
+#tool-esc .esn{font-size:22px;font-weight:800;color:#1a56db}
+#tool-esc .esn.g{color:#057a55} #tool-esc .esn.gr{color:#6b7280}
+#tool-esc .eab{font-size:20px;font-weight:800;color:#057a55}
+#tool-esc .esl{font-size:10px;color:#6b7280;margin-top:2px}
+#tool-esc .etwrap{border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:14px;max-height:300px;overflow-y:auto}
+#tool-esc table{width:100%;border-collapse:collapse;font-size:12px}
+#tool-esc thead{position:sticky;top:0;z-index:1}
+#tool-esc th{background:#f3f4f6;padding:8px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;white-space:nowrap;font-size:11px}
+#tool-esc td{padding:7px 10px;border-bottom:1px solid #e5e7eb}
+#tool-esc tr:last-child td{border-bottom:none}
+#tool-esc tr:hover td{background:#fafbff}
+#tool-esc .ebtn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif}
+#tool-esc .ebtn:disabled{opacity:.4;cursor:not-allowed}
+#tool-esc .ebp{background:#1a56db;color:#fff}
+#tool-esc .ebp:hover:not(:disabled){background:#1342b0}
+#tool-esc .ebo{background:#fff;color:#1a56db;border:2px solid #1a56db}
+#tool-esc .ebo:hover{background:#ebf3fe}
+#tool-esc .ebsm{padding:5px 12px;font-size:12px}
+#tool-esc .earow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px}
+#tool-esc .esigma{display:inline-flex;align-items:center;gap:6px;background:#ebf3fe;color:#1a56db;padding:9px 14px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;border:1px solid #bcd0f7}
+#tool-esc .ecbox{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;font-family:monospace;font-size:10px;word-break:break-all;line-height:1.7;max-height:72px;overflow-y:auto;margin-bottom:6px;color:#6b7280}
+#tool-esc .ebb{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#ebf3fe;color:#1a56db}
+#tool-esc .espin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:espin .6s linear infinite}
+#tool-esc .eempty{text-align:center;padding:32px;color:#6b7280;font-size:13px}
+#tool-esc hr{border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+@keyframes espin{to{transform:rotate(360deg)}}
+</style>
+<div class="ec">
+  <div class="eprog" id="e-prog"></div>
+  <div id="e-content"></div>
+</div>
+</div>
+
+<script>
+(function(){
+// ── STATE ──────────────────────────────────────────────────────────────
+var ES={step:1,dpf1Rows:null,dpf1Name:null,dpf2Rows:null,dpf2Name:null,trackingRows:null,trackingName:null,alreadySentIds:new Set(),candidates:[],flaggedCandidates:[],includeFlagged:new Set(),candidateData:{},sigmaFile:null,sigmaName:null,finalList:[],filterDate:null};
+var E_STEPS=[{n:1,label:'Upload Files'},{n:2,label:'Candidates'},{n:3,label:'Sigma Check'},{n:4,label:'Download'}];
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function eToDate(v){if(!v)return null;if(v instanceof Date)return isNaN(v)?null:v;if(typeof v==='number')return new Date((v-25569)*86400000);var d=new Date(v);return isNaN(d)?null:d;}
+function eFmtDate(v){var d=eToDate(v);if(!d)return '—';return d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function eFmtAmt(n){var x=parseFloat(n);return isNaN(x)?String(n||'—'):'€'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function eFmtTotal(arr){var t=arr.reduce(function(s,c){return s+(parseFloat(c.amount)||0);},0);return '€'+t.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function eReadXLSX(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(e){try{res(XLSX.read(e.target.result,{type:'array',cellDates:true}));}catch(err){rej(err);}};r.onerror=rej;r.readAsArrayBuffer(file);});}
+function eParseCSV(file){return new Promise(function(res,rej){Papa.parse(file,{header:true,skipEmptyLines:true,complete:function(r){res(r.data);},error:rej});});}
+function eIsActionDate(v){if(v===null||v===undefined)return false;var s=String(v).trim();return s!==''&&!/^x+$/i.test(s);}
+function eGetComment(row){var key=Object.keys(row).find(function(k){return /^comments?$/i.test(k.trim());});return key?String(row[key]||'').trim():'';}
+function eGetClosingDate(row){var key=Object.keys(row).find(function(k){return /clos/i.test(k)&&/date/i.test(k);});return key?eToDate(row[key]):null;}
+
+// ── PROCESS ────────────────────────────────────────────────────────────
+function eBuildSentIds(){
+  var rows=ES.trackingRows||[],ids=new Set(),colNames=['Checkout ID','checkout_id','id_checkout','CheckoutID','Checkout Id'];
+  for(var i=0;i<rows.length;i++){
+    var row=rows[i],val=null;
+    for(var j=0;j<colNames.length;j++){if(row[colNames[j]]!=null){val=row[colNames[j]];break;}}
+    if(val==null){var key=Object.keys(row).find(function(k){return /checkout/i.test(k);});if(key)val=row[key];}
+    if(val==null)continue;
+    var cid=String(val).trim().replace(/\.0$/,'');if(cid&&cid!=='null')ids.add(cid);
+  }
+  ES.alreadySentIds=ids;
+}
+var E_EXCL=['payment plan','redressement judiciaire','liquidation','promise of payment'];
+function eProcessDPFs(){
+  eBuildSentIds();
+  var seen=new Set(),cands=[],flagged=[];
+  [{rows:ES.dpf1Rows,src:'DPF.1'},{rows:ES.dpf2Rows,src:'DPF.2'}].forEach(function(s){
+    (s.rows||[]).forEach(function(row){
+      var cid=String(row['checkout_id']||'').trim().replace(/\.0$/,'');
+      if(!cid||cid==='checkout_id'||seen.has(cid)||ES.alreadySentIds.has(cid))return;
+      if(!eIsActionDate(row['Action 1.1'])||!eIsActionDate(row['Action 1.2'])||!eIsActionDate(row['Action 1.3']))return;
+      var pl=String(row['Payment link']||'').trim();if(pl!==''&&pl!=='nan')return;
+      var st=String(row['Sent to Atradius?']||'').trim();if(st!==''&&st!=='nan')return;
+      var dd=eToDate(row['due_date']);if(!dd||dd.getFullYear()>2100||dd<new Date('2025-01-01'))return;
+      if(String(row['retailer_name']||'').trim().toUpperCase()==='MMECOM')return;
+      var cd=eGetClosingDate(row);if(!cd||cd.getFullYear()!==2026)return;
+      var comment=eGetComment(row),cl=comment.toLowerCase();
+      if(E_EXCL.some(function(e){return cl.includes(e);}))return;
+      seen.add(cid);
+      var entry={checkoutId:cid,dueDate:dd,amount:parseFloat(row['bo_amount_to_match_eur'])||0,retailerId:String(row['retailer_id']||'').trim().replace(/\.0$/,''),retailerName:String(row['retailer_name']||'').trim(),source:s.src,comment:comment};
+      ES.candidateData[cid]=Object.assign({},row,{_source:s.src});
+      if(cl.includes('company closed'))flagged.push(entry);else cands.push(entry);
+    });
+  });
+  var byDate=function(a,b){return a.dueDate-b.dueDate;};
+  ES.candidates=cands.sort(byDate);ES.flaggedCandidates=flagged.sort(byDate);
+}
+function eProcessSigma(rows){
+  var ids=new Set(rows.map(function(r){return String(r['Id Checkout']||'').trim();}).filter(Boolean));
+  ES.finalList=ES.candidates.filter(function(c){return ids.has(c.checkoutId);});
+}
+function eBuildFile(){
+  var list=ES.filterDate?ES.finalList.filter(function(c){return c.dueDate>=new Date(ES.filterDate);}):ES.finalList;
+  var wb=XLSX.utils.book_new();
+  var dh=['Id Retailer','Shop Name','Vat Number','Customer Address','Post Code','City','Country','Phone Number','Contact Person','Contact Person Email','Currencies Chosen by Retailer','Comments'];
+  var seenR=new Set(),drows=[dh];
+  list.forEach(function(item){
+    if(seenR.has(item.retailerId))return;seenR.add(item.retailerId);
+    var r=ES.candidateData[item.checkoutId]||{};
+    var vatKey=Object.keys(r).find(function(k){return k.trim()==='retailer_vat_number';});
+    var emailKey=Object.keys(r).find(function(k){return /^email$/i.test(k.trim());});
+    var country=String(r['country']||r['retailer_country']||'').trim();
+    var isUK=/united.?kingdom|^uk$|^gb$/i.test(country);
+    drows.push([parseInt(item.retailerId)||item.retailerId,item.retailerName,vatKey?String(r[vatKey]||'').trim():'',String(r['street']||'').trim(),String(r['cd_postal']||'').trim(),String(r['city']||'').trim(),country,r['phone_number']?String(Math.round(Number(r['phone_number']))):'',[String(r['first_name']||'').trim(),String(r['last_name']||'').trim()].filter(Boolean).join(' '),emailKey?String(r[emailKey]||'').trim():'','["'+(isUK?'GBP':String(r['retailer_currency']||'EUR').trim())+'"]','']);
+  });
+  var dws=XLSX.utils.aoa_to_sheet(drows);dws['!cols']=[14,25,18,30,10,18,12,16,20,28,24,20].map(function(w){return{wch:w};});
+  XLSX.utils.book_append_sheet(wb,dws,'Debtor Details');
+  var fws=XLSX.utils.aoa_to_sheet([['Customer Reference','Day of Issuing Date','Issuing Date _','Due Date _','Currency','Amount With VAT LC','Amount Without VAT LC','Type of Piece','Financial Reference','Invoice Number']]);
+  fws['!cols']=[18,20,20,12,10,18,20,14,24,20].map(function(w){return{wch:w};});
+  XLSX.utils.book_append_sheet(wb,fws,'Financial Details');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Country','Currency','Financial elements','State']]),'Codes');
+  return wb;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────
+function eRenderProg(){
+  var el=document.getElementById('e-prog');if(!el)return;
+  var h='';
+  E_STEPS.forEach(function(s,i){
+    var done=ES.step>s.n,act=ES.step===s.n;
+    var cls=done?'eps done':act?'eps active':'eps';
+    h+='<div class="'+cls+'"><div class="epn">'+(done?'✓':s.n)+'</div><span class="eplbl">'+s.label+'</span></div>';
+    if(i<E_STEPS.length-1)h+='<div class="epl'+(done?' done':'')+'"></div>';
+  });
+  el.innerHTML=h;
+}
+
+function eUZ(key,title,hint){
+  var name=ES[key+'Name'];
+  return '<div class="euz'+(name?' done':'')+'"><div class="euico">'+(name?'✅':'📄')+'</div><div class="eut">'+title+'</div><div class="euh">'+hint+'</div>'+(name?'<div class="eufn">'+name+'</div>':'')+'</div>';
+}
+
+function eRenderS1(){
+  var all=ES.dpf1Rows&&ES.dpf2Rows&&ES.trackingRows;
+  var miss=[!ES.dpf1Rows&&'DPF.1',!ES.dpf2Rows&&'DPF.2',!ES.trackingRows&&'Tracking sheet'].filter(Boolean);
+  return '<div class="ecard"><div class="ect">Upload your files</div><div class="ecd">All files are read locally — nothing is uploaded anywhere.</div>'
+    +'<div class="eugrid" id="e-dpf-grid">'+eUZ('dpf1','DPF.1 — Disputed','.csv or .xlsx')+eUZ('dpf2','DPF.2 — Failed','.csv or .xlsx')+'</div>'
+    +'<div style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:14px">'
+    +'<div style="font-size:11px;font-weight:700;margin-bottom:8px;color:#6b7280;text-transform:uppercase">Atradius Tracking Sheet</div>'
+    +'<p style="font-size:13px;margin-bottom:10px">Download as Excel or CSV, upload below. Used to exclude already-sent checkouts.</p>'
+    +'<a href="https://docs.google.com/spreadsheets/d/1C3836wgHOdjbZXuyCAClHWpYXUzJ5rYRFh5Lnu46BfI/edit?gid=0#gid=0" target="_blank" class="esigma" style="margin-bottom:12px;display:inline-block">🔗 Open tracking sheet</a>'
+    +'<div id="e-tracking-zone">'+eUZ('tracking','Atradius Tracking Sheet','.csv or .xlsx')+'</div>'
+    +(ES.alreadySentIds.size>0?'<div style="margin-top:8px;font-size:12px;color:#057a55;font-weight:600">✅ '+ES.alreadySentIds.size+' already-sent IDs loaded</div>':'')
+    +'</div>'
+    +'<div class="earow"><button class="ebtn ebp" id="e-process-btn" '+(all?'':'disabled')+'>Process Files →</button>'
+    +(all?'':'<span style="font-size:12px;color:#6b7280">Still needed: '+miss.join(', ')+'</span>')+'</div></div>';
+}
+
+function eRenderS2(){
+  var n=ES.candidates.length,d1=ES.candidates.filter(function(c){return c.source==='DPF.1';}).length,d2=ES.candidates.filter(function(c){return c.source==='DPF.2';}).length;
+  var flagged=ES.flaggedCandidates;
+  var allIds=[].concat(ES.candidates,flagged.filter(function(c){return ES.includeFlagged.has(c.checkoutId);})).map(function(c){return c.checkoutId;}).join(', ');
+  var rows=ES.candidates.map(function(c,i){return '<tr><td style="color:#6b7280">'+(i+1)+'</td><td style="font-family:monospace">'+c.checkoutId+'</td><td>'+c.retailerName+'</td><td>'+eFmtDate(c.dueDate)+'</td><td style="font-weight:600">'+eFmtAmt(c.amount)+'</td><td><span class="ebb">'+c.source+'</span></td></tr>';}).join('');
+  var fRows=flagged.map(function(c,i){return '<tr style="background:'+(i%2===0?'#fff':'#fdf6b2')+'">'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb"><input type="checkbox" data-flagid="'+c.checkoutId+'" '+(ES.includeFlagged.has(c.checkoutId)?'checked':'')+'></td>'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb;font-family:monospace">'+c.checkoutId+'</td>'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb">'+c.retailerName+'</td>'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb">'+eFmtDate(c.dueDate)+'</td>'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb;font-weight:600">'+eFmtAmt(c.amount)+'</td>'
+    +'<td style="padding:7px 10px;border-bottom:1px solid #e5e7eb"><span class="ebb">'+c.source+'</span></td></tr>';}).join('');
+  return '<div class="ecard"><div class="ect">Candidates identified</div><div class="ecd">Actions 1.1–1.3 complete · no payment link · not yet sent to Atradius · closing date 2026</div>'
+    +'<div class="estats"><div class="estat"><div class="esn">'+n+'</div><div class="esl">Total candidates</div></div>'
+    +'<div class="estat"><div class="esn">'+d2+'</div><div class="esl">From DPF.2</div></div>'
+    +'<div class="estat"><div class="esn">'+d1+'</div><div class="esl">From DPF.1</div></div>'
+    +'<div class="estat"><div class="eab">'+eFmtTotal(ES.candidates)+'</div><div class="esl">Total value</div></div></div>'
+    +(n>0?'<div class="etwrap"><table><thead><tr><th>#</th><th>Checkout ID</th><th>Retailer</th><th>Due Date</th><th>Amount</th><th>Source</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="eempty">🎉 No new candidates found.</div>')+'</div>'
+    +(flagged.length>0?'<div class="ecard" style="border-color:#f6c94e"><div class="ect">⚠️ Flagged — Company Closed ('+flagged.length+')</div><div class="ecd">Tick the ones to include in the escalation.</div>'
+    +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fdf6b2"><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Include?</th><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Checkout ID</th><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Retailer</th><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Due Date</th><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Amount</th><th style="padding:7px 10px;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb;text-align:left">Source</th></tr></thead><tbody>'+fRows+'</tbody></table></div>'
+    +'<div style="font-size:12px;color:#6b7280">'+ES.includeFlagged.size+' of '+flagged.length+' selected</div></div>':'')
+    +'<div class="ecard"><div class="ect">🔍 Verify in Sigma</div><div class="ecd">Download the Defaulted Checkouts table. IDs not present are already paid.</div>'
+    +'<a href="https://app.sigmacomputing.com/ankorstore/workbook/Finance-FP-and-A-Reconciliation-and-Recovery-5pTyENUhnjU1FN4mRGXRxZ?:nodeId=xGACtnihGG&:fullScreen=true" target="_blank" class="esigma" style="margin-bottom:12px;display:inline-block">🔗 Open Sigma — Defaulted Checkouts</a>'
+    +'<div style="font-size:12px;font-weight:700;margin-bottom:4px">IDs to check ('+(n+ES.includeFlagged.size)+' total):</div>'
+    +'<div class="ecbox">'+( allIds||'—')+'</div>'
+    +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px"><button class="ebtn ebo ebsm" id="e-copy-ids-btn">📋 Copy all IDs</button><span id="e-copy-ok" style="font-size:12px;color:#057a55;display:none">✅ Copied!</span></div>'
+    +'<hr><div class="earow"><button class="ebtn ebp" id="e-tos3-btn">I\'ve downloaded the Sigma export →</button></div></div>';
+}
+
+function eRenderS3(){
+  var up=!!ES.sigmaName;
+  return '<div class="ecard"><div class="ect">Upload Sigma export</div><div class="ecd">Upload the CSV from Defaulted Checkouts. Checkouts not present will be removed.</div>'
+    +'<div class="euz'+(up?' done':'')+'" id="e-sigma-zone" style="max-width:380px;margin-bottom:16px"><div class="euico">'+(up?'✅':'📥')+'</div><div class="eut">Defaulted Checkouts CSV</div><div class="euh">From Sigma</div>'+(up?'<div class="eufn">'+ES.sigmaName+'</div>':'')+'</div>'
+    +'<div class="earow"><button class="ebtn ebo ebsm" id="e-back-btn">← Back</button><button class="ebtn ebp" id="e-xref-btn" '+(up?'':'disabled')+'>Cross-reference →</button></div></div>';
+}
+
+function eRenderS4(){
+  var final=ES.finalList,excluded=ES.candidates.length-final.length;
+  var disp=ES.filterDate?final.filter(function(c){return c.dueDate>=new Date(ES.filterDate);}):final;
+  var fout=final.length-disp.length;
+  var today=new Date(),dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0'),yyyy=today.getFullYear(),ts=dd+'/'+mm+'/'+yyyy;
+  var rows=disp.map(function(c,i){return '<tr><td style="color:#6b7280">'+(i+1)+'</td><td style="font-family:monospace">'+c.checkoutId+'</td><td>'+c.retailerName+'</td><td>'+c.retailerId+'</td><td>'+eFmtDate(c.dueDate)+'</td><td style="font-weight:600">'+eFmtAmt(c.amount)+'</td></tr>';}).join('');
+  var trows=disp.map(function(c,i){return '<tr style="background:'+(i%2===0?'#fff':'#f3f4f6')+'">'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb">'+c.retailerName+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-family:monospace">'+c.checkoutId+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-family:monospace">'+c.retailerId+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-weight:600">'+eFmtAmt(c.amount)+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb">'+eFmtDate(c.dueDate)+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb">'+ts+'</td>'
+    +'<td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;color:#6b7280"></td></tr>';}).join('');
+  var sqlIds=disp.map(function(c){return"'"+c.checkoutId+"'";});
+  var sqlLines=[];for(var i=0;i<sqlIds.length;i+=4)sqlLines.push('  '+sqlIds.slice(i,i+4).join(', '));
+  var sql='WHERE c.id_checkout IN (\n'+sqlLines.join(',\n')+'\n)';
+  return '<div class="ecard"><div class="ect">✅ Final escalation list</div><div class="ecd">'+excluded+' removed (paid / not in Sigma).</div>'
+    +'<div class="estats"><div class="estat"><div class="esn g">'+disp.length+'</div><div class="esl">To escalate</div></div>'
+    +'<div class="estat"><div class="esn gr">'+excluded+'</div><div class="esl">Removed</div></div>'
+    +'<div class="estat" style="grid-column:span 2"><div class="eab">'+eFmtTotal(disp)+'</div><div class="esl">Total to recover</div></div></div>'
+    +'<div style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin-bottom:14px">'
+    +'<div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:8px">FILTER BY DUE DATE — show from:</div>'
+    +'<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +'<input type="date" id="e-filter-date" value="'+(ES.filterDate||'')+'" style="border:1px solid #e5e7eb;border-radius:6px;padding:6px 10px;font-size:13px">'
+    +(ES.filterDate?'<span style="font-size:12px;color:#6b7280">Hiding <strong>'+fout+'</strong> earlier</span><button class="ebtn ebo ebsm" id="e-clear-filter-btn">✕ Clear</button>':'<span style="font-size:12px;color:#6b7280">No filter</span>')
+    +'</div></div>'
+    +(disp.length>0?'<div class="etwrap"><table><thead><tr><th>#</th><th>Checkout ID</th><th>Retailer</th><th>Retailer ID</th><th>Due Date</th><th>Amount</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="eempty">🎉 Nothing to escalate.</div>')+'</div>'
+    +'<div class="ecard"><div class="ect">📋 Manual steps</div>'
+    +'<div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-weight:700;font-size:13px;margin-bottom:4px">1 — Update all 3 tracking spreadsheets</div>'
+    +'<a href="https://docs.google.com/spreadsheets/d/1C3836wgHOdjbZXuyCAClHWpYXUzJ5rYRFh5Lnu46BfI/edit?gid=0#gid=0" target="_blank" class="esigma" style="margin-bottom:12px;display:inline-block">🔗 Open tracking sheet</a>'
+    +(disp.length>0?'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+    +'<span style="font-size:12px;color:#6b7280;font-weight:600">'+disp.length+' rows to paste</span>'
+    +'<button class="ebtn ebsm ebp" id="e-copy-tbl-btn">📋 Copy rows</button></div>'
+    +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;max-height:200px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">'
+    +'<thead style="position:sticky;top:0"><tr style="background:#f3f4f6"><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Retailer</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Checkout ID</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Retailer ID</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Amount</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Due Date</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Date Added</th><th style="padding:7px 10px;text-align:left;font-weight:700;color:#6b7280;border-bottom:1px solid #e5e7eb">Note</th></tr></thead>'
+    +'<tbody>'+trows+'</tbody></table></div>':'')+'</div>'
+    +'<div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px">'
+    +'<div style="font-weight:700;font-size:13px;margin-bottom:4px">2 — Run Sigma query &amp; 3 — Download Atradius file</div>'
+    +'<a href="https://docs.google.com/spreadsheets/d/1V791lA5bQSx-B1WQhwRSyBZp7ZsD4XfH9wh1MQkEyTk/edit?gid=1454968430#gid=1454968430" target="_blank" class="esigma" style="margin-bottom:10px;display:inline-block">🔗 Open Google Sheet</a>'
+    +(disp.length>0?'<div style="position:relative;margin-bottom:12px"><pre id="e-sql" style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:10px 40px 10px 12px;font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all;margin:0">'+sql+'</pre>'
+    +'<button class="ebtn ebsm ebp" id="e-copy-sql-btn" style="position:absolute;top:6px;right:6px;padding:3px 8px;font-size:11px">📋 Copy</button></div>'
+    +'<button class="ebtn ebp ebsm" id="e-dl-btn">⬇️ Download Atradius Sharing File</button>':'')+'</div>'
+    +'<hr><div class="earow"><button class="ebtn ebo ebsm" id="e-reset-btn">🔄 Start new run</button></div></div>';
+}
+
+function eRender(){
+  eRenderProg();
+  var el=document.getElementById('e-content');
+  if(!el)return;
+  if(ES.step===1)el.innerHTML=eRenderS1();
+  else if(ES.step===2)el.innerHTML=eRenderS2();
+  else if(ES.step===3)el.innerHTML=eRenderS3();
+  else if(ES.step===4)el.innerHTML=eRenderS4();
+  eBindEvents();
+}
+
+// ── EVENT DELEGATION (no inline handlers) ─────────────────────────────
+function eBindEvents(){
+  var el=document.getElementById('e-content');
+  if(!el)return;
+
+  // File upload via hidden inputs triggered by click on upload zones
+  ['dpf1','dpf2','tracking'].forEach(function(key){
+    var zone=el.querySelector('.eugrid .euz:nth-child('+(key==='dpf1'?1:key==='dpf2'?2:1)+'), #e-tracking-zone .euz');
+  });
+
+  // Create hidden file inputs and wire upload zones
+  eWireUpload(el,'#e-dpf-grid .euz:nth-child(1)','e-inp-dpf1','dpf1');
+  eWireUpload(el,'#e-dpf-grid .euz:nth-child(2)','e-inp-dpf2','dpf2');
+  eWireUpload(el,'#e-tracking-zone .euz','e-inp-tracking','tracking');
+  eWireUpload(el,'#e-sigma-zone','e-inp-sigma','sigma');
+
+  // Buttons
+  eOn('e-process-btn',function(){eRunS1(this);});
+  eOn('e-tos3-btn',function(){
+    var toAdd=ES.flaggedCandidates.filter(function(c){return ES.includeFlagged.has(c.checkoutId);});
+    if(toAdd.length)ES.candidates=[].concat(ES.candidates,toAdd).sort(function(a,b){return a.dueDate-b.dueDate;});
+    ES.step=3;eRender();
+  });
+  eOn('e-back-btn',function(){ES.step=2;eRender();});
+  eOn('e-xref-btn',function(){eRunS3(this);});
+  eOn('e-copy-ids-btn',function(){
+    var ids=[].concat(ES.candidates,ES.flaggedCandidates.filter(function(c){return ES.includeFlagged.has(c.checkoutId);})).map(function(c){return c.checkoutId;}).join(', ');
+    eCopy(ids,function(){var ok=document.getElementById('e-copy-ok');if(ok){ok.style.display='inline';setTimeout(function(){ok.style.display='none';},2500);}});
+  });
+  eOn('e-copy-tbl-btn',function(btn){
+    var disp=ES.filterDate?ES.finalList.filter(function(c){return c.dueDate>=new Date(ES.filterDate);}):ES.finalList;
+    var today=new Date(),dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0'),yyyy=today.getFullYear(),ts=dd+'/'+mm+'/'+yyyy;
+    var tsv=disp.map(function(c){return[c.retailerName,c.checkoutId,c.retailerId,parseFloat(c.amount).toFixed(2),eFmtDate(c.dueDate),ts,''].join('\t');}).join('\n');
+    eCopy(tsv,function(){btn.textContent='✅ Copied!';setTimeout(function(){btn.textContent='📋 Copy rows';},2000);});
+  });
+  eOn('e-copy-sql-btn',function(btn){
+    var el=document.getElementById('e-sql');
+    if(el)eCopy(el.textContent,function(){btn.textContent='✅';setTimeout(function(){btn.textContent='📋 Copy';},2000);});
+  });
+  eOn('e-dl-btn',function(){
+    try{
+      var wb=eBuildFile();
+      var today=new Date(),dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0'),yyyy=today.getFullYear();
+      XLSX.writeFile(wb,dd+mm+yyyy+'_Ankorstore_SAS.xlsx');
+    }catch(e){alert('Download error: '+e.message);}
+  });
+  eOn('e-filter-date',function(){ES.filterDate=this.value||null;eRender();});
+  eOn('e-clear-filter-btn',function(){ES.filterDate=null;eRender();});
+  eOn('e-reset-btn',function(){Object.assign(ES,{step:1,dpf1Rows:null,dpf1Name:null,dpf2Rows:null,dpf2Name:null,trackingRows:null,trackingName:null,alreadySentIds:new Set(),candidates:[],flaggedCandidates:[],includeFlagged:new Set(),candidateData:{},sigmaFile:null,sigmaName:null,finalList:[],filterDate:null});eRender();});
+
+  // Flagged checkboxes
+  el.querySelectorAll('[data-flagid]').forEach(function(cb){
+    cb.addEventListener('change',function(){
+      var cid=this.getAttribute('data-flagid');
+      if(this.checked)ES.includeFlagged.add(cid);else ES.includeFlagged.delete(cid);
+      // Just update count display without full re-render
+      var cnt=el.querySelector('.ecard [style*="border-color:#f6c94e"] div:last-child');
+      if(cnt)cnt.textContent=ES.includeFlagged.size+' of '+ES.flaggedCandidates.length+' selected';
+    });
+  });
+}
+
+function eWireUpload(container,selector,inputId,key){
+  var zone=container.querySelector(selector);
+  if(!zone)return;
+  // Remove old input if any
+  var old=document.getElementById(inputId);if(old)old.parentNode.removeChild(old);
+  // Create fresh hidden input outside the zone
+  var inp=document.createElement('input');
+  inp.type='file';inp.id=inputId;inp.accept='.csv,.xlsx,.xls';
+  inp.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+  document.body.appendChild(inp);
+  zone.onclick=function(){inp.value='';inp.click();};
+  inp.onchange=function(){
+    var file=inp.files[0];if(!file)return;
+    if(key==='sigma'){ES.sigmaFile=file;ES.sigmaName=file.name;eRender();return;}
+    var ext=file.name.split('.').pop().toLowerCase();
+    var done=function(rows){ES[key+'Rows']=rows;ES[key+'Name']=file.name;eRender();};
+    if(ext==='csv'){eParseCSV(file).then(done).catch(function(e){alert(e.message);});}
+    else{eReadXLSX(file).then(function(wb){done(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:null}));}).catch(function(e){alert(e.message);});}
+  };
+}
+
+function eOn(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('click',function(){fn.call(this,this);});}
+function eCopy(text,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(cb).catch(function(){eFallbackCopy(text,cb);});}
+  else eFallbackCopy(text,cb);
+}
+function eFallbackCopy(text,cb){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);if(cb)cb();}
+
+async function eRunS1(btn){
+  btn.disabled=true;btn.innerHTML='<span class="espin"></span> Processing...';
+  await new Promise(function(r){setTimeout(r,50);});
+  try{eProcessDPFs();ES.step=2;}catch(e){alert('Error: '+e.message);}
+  eRender();
+}
+async function eRunS3(btn){
+  if(!ES.sigmaFile){alert('Please upload the Sigma CSV first.');return;}
+  btn.disabled=true;btn.innerHTML='<span class="espin"></span> Cross-referencing...';
+  await new Promise(function(r){setTimeout(r,50);});
+  try{var rows=await eParseCSV(ES.sigmaFile);eProcessSigma(rows);ES.step=4;}catch(e){alert('Error: '+e.message);}
+  eRender();
+}
+
+// Initial render
+eRender();
+
+// Expose switchTool-safe re-render
+window.eRenderPublic=eRender;
+})();
+</script>
+</body>
+</html>
